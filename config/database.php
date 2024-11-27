@@ -46,8 +46,8 @@ return [
             'unix_socket' => env('DB_SOCKET', ''),
 //            'charset' => env('DB_CHARSET', 'utf8mb4'),
 //            'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
-            'charset' => 'utf8', // Cambia de utf8mb4 a utf8
-            'collation' => 'utf8_unicode_ci', // Cambia la colación
+            'charset' => 'utf8', // Charset en utf8
+            'collation' => 'utf8_spanish_ci', // Colación para español
             'prefix' => '',
             'prefix_indexes' => true,
             'strict' => true,

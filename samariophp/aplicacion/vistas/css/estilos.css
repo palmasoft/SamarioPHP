@@ -1,0 +1,481 @@
+/* Definición de Variables */
+:root {
+    /* Colores principales */
+    --color-principal: #007BFF;
+    --color-secundario: #8e44ad;
+    --color-fondo: #f4f4f9;
+    --color-fondo-secundario: #f5f5f5;
+    --color-texto: #333;
+    --color-texto-secundario: #f5f5f5;
+    --color-texto-terciario: #f7f7f7;
+    --color-exito: #27ae60;
+    --color-error: #c0392b;
+    --color-neutro: #ddd;
+
+    /* Fuentes */
+    --fuente-principal: 'Poppins', sans-serif; /* Cambié a Poppins */
+    --fuente-monospaciada: "Courier New", monospace;
+
+    /* Espaciado */
+    --espaciado: 20px;
+    --espaciado-mensajes: 10px;
+
+    /* Bordes */
+    --borde-radius: 8px;
+    --borde-mensajes: 5px;
+
+    /* Sombras */
+    --sombra-principal: 0 2px 10px rgba(0, 0, 0, 0.1);
+    --sombra-secundaria: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    font-family: var(--fuente-principal);
+    margin: 0;
+    padding: 0;
+    background: var(--color-fondo);
+    color: var(--color-texto);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Distribuir espacio entre el contenido y el footer */
+    /*height: 100vh;*/
+}
+
+header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+h1, h2 {
+    color: var(--color-principal);
+}
+
+h2 {
+    margin-top: 20px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    margin: 10px 0;
+}
+
+code {
+    background-color: #f8f8f8;
+    padding: 5px;
+    border-radius: var(--borde-mensajes);
+    font-family: var(--fuente-monospaciada);
+}
+
+header {
+    background: var(--color-secundario);
+    color: #fff;
+    padding: 20px 0;
+    text-align: center;
+}
+
+header .logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+header .logo h1 {
+    font-size: 28px;
+    margin-top: 10px;
+}
+
+header .logo .logo-img {
+    width: 150px;
+}
+
+
+label {
+    display: block;
+    font-weight: 500;
+    color: #555;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-top: 5px;
+    background-color: #fafafa;
+}
+
+input:focus {
+    border-color: #007bff;
+    outline: none;
+    background-color: #fff;
+}
+
+
+
+footer {
+    background: #333;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+    margin-top: 30px;
+}
+
+footer p {
+    font-size: 14px;
+}
+
+
+footer {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+    width: 100%;
+    /*position: fixed;  Fijo en la parte inferior */
+/*    bottom: 0;  Lo coloca en la parte inferior 
+    left: 0;
+    z-index: 10;  Asegura que el footer esté por encima de otros contenidos */
+}
+
+footer p {
+    font-size: 0.9rem;
+}
+
+footer a {
+    color: var(--color-principal);
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* SamarioPHP */
+.marca {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.titulo {
+    font-size: 2rem;
+    color: var(--color-principal);
+    margin: 0;
+}
+
+.subtitulo {
+    font-size: 1rem;
+    color: var(--color-texto-secundario);
+}
+
+.app-info {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.app-titulo {
+    font-size: 1.5rem;
+    color: var(--color-texto);
+}
+
+.app-descripcion {
+    font-size: 1rem;
+    color: var(--color-texto-terciario);
+}
+
+.note {
+    background-color: #f9f9f9;
+    padding: var(--espaciado);
+    border: 1px solid var(--color-neutro);
+    border-radius: var(--borde-mensajes);
+    margin: 15px 0;
+}
+
+/** Instalación **/
+.contenedor {
+    background: #fff;
+    padding: var(--espaciado);
+    border-radius: var(--borde-radius);
+    box-shadow: var(--sombra-principal);
+    max-width: 800px;
+    width: 100%;
+    display: block;
+    margin: auto;
+    margin-top: 20px;
+    overflow-y: auto;
+}
+
+.boton-iniciar {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-top: 10px;
+    background-color: var(--color-principal);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 15px;
+    font-size: 1rem;
+}
+
+.boton-iniciar:hover {
+    background-color: #0056b3;
+}
+
+
+
+
+/* Estilos de la aplicación (inicio) */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--espaciado);
+}
+
+.main-content {
+    margin-top: 30px;
+}
+
+.intro, .features, .credits {
+    background: #fff;
+    padding: var(--espaciado);
+    margin-bottom: 20px;
+    border-radius: var(--borde-radius);
+    box-shadow: var(--sombra-secundaria);
+}
+
+.features ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.features li {
+    margin-bottom: 10px;
+}
+
+.features li strong {
+    color: var(--color-secundario);
+}
+
+
+/*mensaje del sitemas*/
+.mensaje {
+    padding: var(--espaciado-mensajes);
+    margin-top: 20px;
+    border-radius: var(--borde-mensajes);
+    text-align: center;
+}
+.mensaje.error {
+    border: 1px solid var(--color-error);
+    background-color: #fdecea;
+    color: var(--color-error);
+}
+.mensaje.exito {
+    border: 1px solid var(--color-exito);
+    background-color: #eafaf1;
+    color: var(--color-exito);
+}
+
+
+
+/* Estilos adicionales para el menú público */
+.public-menu {
+    background-color: #f8f9fa;
+    padding: 10px 20px;
+    border-bottom: 1px solid #e5e5e5;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: var(--borde-radius);
+    border-radius: 10px 10px 0px 0px;
+    box-shadow: var(--sombra-secundaria);
+}
+.public-menu .menu-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #007bff;
+}
+.public-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+.public-menu li {
+    margin-left: 20px;
+}
+.public-menu a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+.public-menu a:hover {
+    color: #007bff;
+}
+
+
+
+/* para la piecera */
+.credits {
+    text-align: center;
+}
+
+.credits img {
+    width: 200px;
+    margin-top: 10px;
+}
+
+
+
+/* login */
+
+/* Estilos del Login */
+
+.login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 400px;
+    background-color: #f4f4f9;
+    font-family: 'Poppins', sans-serif;
+}
+
+.login .container {
+    background-color: white;
+    padding: 2rem;
+    border-radius: var(--borde-radius);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+    flex-grow: 1; /* Permite que la caja crezca si es necesario */
+}
+/* Contenedor del logo y el título */
+.logo-container {
+    display: flex;          /* Utilizamos flexbox */
+    align-items: center;    /* Alinea verticalmente los elementos en el centro */
+    justify-content: flex-start; /* Alinea los elementos al principio del contenedor (izquierda) */
+    gap: 10px;              /* Añade espacio entre el texto y la imagen */
+}
+
+/* Ajustes para la imagen del logo */
+.logo {
+    width: 40px;            /* Ajusta el tamaño del logo (puedes cambiar este valor) */
+    height: auto;           /* Mantén la proporción del logo */
+}
+
+.login .logo-container {
+    text-align: center;
+    margin-bottom: 0px;
+}
+
+.login .logo {
+    max-width: 120px;
+    margin-bottom: 10px;
+}
+/* Ajustes para la imagen del logo */
+.login .logo {
+    width: 40px;            /* Ajusta el tamaño del logo (puedes cambiar este valor) */
+    height: auto;           /* Mantén la proporción del logo */
+}
+
+
+.login .form-container h2 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.login .form-group {
+    margin-bottom: 15px;
+}
+
+.login .form-actions {
+    text-align: center;
+}
+
+.login .btn-primary {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.1rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.login .btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.login .login-options {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.login .login-options a {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.login .login-options a:hover {
+    text-decoration: underline;
+}
+
+
+/* Estilos para el botón de Google */
+/* Estilos para el contenedor del botón de Google */
+.google-login {
+    margin-top: 20px;
+    text-align: center;
+}
+
+/* Estilos para el botón de Google */
+.google-btn {
+    background-color: coral;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 12px 20px;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 350px;
+    cursor: pointer;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.google-btn img {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+}
+
+.google-btn:hover {
+    background-color: #f7f7f7;
+}

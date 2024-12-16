@@ -1,0 +1,46 @@
+{
+    "name": "puroingeniosamario/samariophp",
+    "description": "Un framework ligero en PHP para proyectos personalizados hecho con PURO INGENIO SAMARIO.",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "SamarioPHP\\": "samariophp/",            
+            "SamarioPHP\\Aplicacion\\": "samariophp/aplicacion/",
+            "SamarioPHP\\Controladores\\": "samariophp/aplicacion/controladores/",
+
+            "SamarioPHP\\Ayudas\\": "samariophp/sistema/ayudas/",
+            "SamarioPHP\\Sistema\\Nucleo\\": "samariophp/sistema/nucleo/",
+
+            "SamarioPHP\\BaseDeDatos\\": "samariophp/base_de_datos/",
+            "SamarioPHP\\BaseDeDatos\\Generador\\": "samariophp/base_de_datos/generador/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Puro Ingenio Samario",
+            "email": "ing.llinasramirez@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "slim/slim": "^4.14",
+        "twig/twig": "^3.16",
+        "catfan/medoo": "^2.1",
+        "phpmailer/phpmailer": "^6.9",
+        "tecnickcom/tcpdf": "^6.7",
+        "nyholm/psr7": "^1.8",
+        "slim/http": "^1.4",
+        "slim/psr7": "^1.7",
+        "httpsoft/http-message": "^1.1",
+        "httpsoft/http-server-request": "^1.1",
+        "nyholm/psr7-server": "^1.1",
+        "guzzlehttp/psr7": "^2.7",
+        "laminas/laminas-diactoros": "^3.5",
+        "monolog/monolog": "^3.8",
+        "robmorgan/phinx": "^0.16.5"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.5"
+    }
+}

@@ -1,0 +1,64 @@
+<h3>Instrucciones para el Programador</h3>
+<ul>
+    <li><strong>Verificar requisitos:</strong> Asegúrese de que el servidor cumpla con los requisitos de SamarioPHP.</li>
+    <li><strong>Base de datos:</strong> Cree una base de datos vacía antes de iniciar la instalación.</li>
+    <li><strong>Archivos:</strong> Verifique que todos los archivos del proyecto estén correctamente ubicados en el servidor.</li>
+    <li><strong>Ejecutar la instalación:</strong> Haga clic en "Iniciar instalación" para comenzar el proceso de instalación de tablas y configuraciones.</li>
+    <li><strong>Seguridad:</strong> Una vez completada la instalación, elimine el archivo de instalación o configúrelo para que no sea accesible desde la web.</li>
+</ul>
+
+<h1>Instrucciones de Instalación</h1>
+<p>Sigue los pasos a continuación para completar la instalación inicial del framework:</p>
+
+<h2>Paso 1: Configurar el archivo de configuración</h2>
+<p>Edita el archivo <code>samariophp/configuracion.php</code> para configurar las credenciales de la base de datos y los ajustes de la aplicación:</p>
+
+<pre><code>
+return [
+    'base_de_datos' => [
+        'tipo' => 'mysql',
+        'servidor' => 'localhost', // Cambia este valor por el servidor de tu base de datos
+        'puerto' => 3306, // Cambia el puerto si es necesario
+        'nombre_basedatos' => 'nombre_base_datos', // Nombre de tu base de datos
+        'nombre_usuario' => 'usuario', // Usuario de la base de datos
+        'clave_usuario' => 'contraseña', // Contraseña de la base de datos
+        'conjunto_caracteres' => 'utf8', // Ajusta la codificación según tus necesidades
+    ],
+    'aplicacion' => [
+        'nombre' => 'Nombre de tu aplicación', // Nombre de tu aplicación
+        'url_base' => 'http://localhost/', // Cambia a la URL base de tu aplicación
+        'mantenimiento' => false, // Cambia a true para habilitar el modo de mantenimiento
+        'entorno' => 'desarrollo', // Cambia a 'produccion' cuando lances la aplicación
+    ],
+];
+</code></pre>
+
+<h2>Paso 2: Ejecutar el instalador</h2>
+<p>Accede al archivo de instalación desde tu navegador o desde la línea de comandos:</p>
+<ul>
+    <li><strong>Navegador:</strong> Ve a <code>{{ config.aplicacion.url_base }}instalacion</code>.</li>
+    <li><strong>CLI:</strong> Ejecuta el comando <code>php samariophp/instalador.php</code> desde la raíz del proyecto.</li>
+</ul>
+
+<div class="note">
+    <strong>Nota:</strong> El instalador verificará si las tablas ya existen. Si están creadas, no se realizarán cambios adicionales.
+</div>
+
+<h2>Paso 3: Confirmar la instalación</h2>
+<p>Una vez completada, deberías ver el mensaje <em>"Instalación completada con éxito."</em> en el navegador o terminal.</p>
+
+<h3>Detalles adicionales:</h3>
+<ul>
+    <li>Durante la instalación, se crearán las siguientes tablas en la base de datos: 
+        <ul>
+            <li><strong>usuarios</strong> (para gestionar la autenticación y roles)</li>
+            <li><strong>roles</strong> (para gestionar los permisos)</li>
+            <li><strong>usuarios_roles</strong> (para asociar usuarios con roles)</li>
+            <li><strong>sesiones</strong> (para la gestión de sesiones activas de usuarios)</li>
+            <li><strong>tokens_api</strong> (para la gestión de accesos mediante API)</li>
+        </ul>
+    </li>
+    <li>Si necesitas modificar las tablas, puedes hacerlo directamente a través del archivo <code>esquema_inicial.php</code> y regenerar las migraciones con el instalador.</li>
+</ul>
+
+<p>¡Eso es todo! El framework está listo para usar.</p>

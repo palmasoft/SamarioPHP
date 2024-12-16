@@ -1,12 +1,16 @@
+RewriteEngine On
+RewriteBase /
 
-# php -- BEGIN cPanel-generated handler, do not edit
-# Set the “ea-php82” package as the default “PHP” programming language.
-<IfModule mime_module>
-  AddHandler application/x-httpd-ea-php82 .php .php8 .phtml
-</IfModule>
-# php -- END cPanel-generated handler, do not edit
+# Redirigir solicitudes de /imagenes/ a /publico/imagenes/
+RewriteRule ^imagenes/(.*)$ samariophp/aplicacion/vistas/imagenes/$1 [L]
 
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    RewriteRule ^(.*)$ public/$1 [L]
-</IfModule>
+# Redirigir solicitudes de /css/ a /publico/css/
+RewriteRule ^css/(.*)$ samariophp/aplicacion/vistas/css/$1 [L]
+
+# Redirigir solicitudes de /js/ a /publico/js/
+RewriteRule ^css/(.*)$ samariophp/aplicacion/vistas/js/$1 [L]
+
+# Redirigir todas las solicitudes al index.php, excepto si el archivo o directorio existe
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [L]

@@ -4,14 +4,14 @@
 {% block encabezado %}{% endblock %}
 {% block contenido %}   
 
-    <title>Error de Verificación</title>
+    <title>Verificación de Correo</title>
     <link rel="stylesheet" href="/publico/css/estilos.css">
 </head>
 <body>
     <div class="container">
-        <h2>Error de Verificación</h2>
-        <p>Hubo un problema al verificar tu correo. Por favor, intenta nuevamente o contacta con soporte.</p>
-        <p><a href="/login">Volver al inicio de sesión</a></p>
+        <h2>Verificación de Correo</h2>
+        <p>Su correo ha sido verificado exitosamente. Ahora puede iniciar sesión.</p>
+        <p><a href="/inicio-sesion">Iniciar sesión</a></p>
     </div>
 </body>
 </html>

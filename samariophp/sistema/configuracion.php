@@ -18,7 +18,7 @@ return [
         'version' => '24.01', // año paquete  
         'nombre' => 'Coge Un Numero - Elige tu suerte!!! ',
         'url_base' => 'https://app.cogeunnumero.com/',
-        'logo' => 'imagenes/samarioPHP.png',
+        'logo' => '/imagenes/samarioPHP.png',
         'entorno' => 'desarrollo', // 'desarrollo' o 'produccion'
     ],
     'archivos' => [

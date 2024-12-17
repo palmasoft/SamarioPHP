@@ -38,7 +38,8 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between; /* Distribuir espacio entre el contenido y el footer */
-    /*height: 100vh;*/
+
+    min-height: 100vh;
 }
 
 header {
@@ -102,7 +103,7 @@ label {
 }
 
 input {
-    width: 100%;
+    width: -webkit-fill-available;
     padding: 10px;
     font-size: 1rem;
     border: 1px solid #ccc;
@@ -122,26 +123,9 @@ input:focus {
 footer {
     background: #333;
     color: #fff;
-    padding: 10px;
+    padding: 0px;
     text-align: center;
     margin-top: 30px;
-}
-
-footer p {
-    font-size: 14px;
-}
-
-
-footer {
-    background-color: #333;
-    color: #fff;
-    padding: 10px;
-    text-align: center;
-    width: 100%;
-    /*position: fixed;  Fijo en la parte inferior */
-/*    bottom: 0;  Lo coloca en la parte inferior 
-    left: 0;
-    z-index: 10;  Asegura que el footer esté por encima de otros contenidos */
 }
 
 footer p {
@@ -238,14 +222,27 @@ footer a:hover {
 
 .boton-iniciar:hover {
     background-color: #0056b3;
+} 
+
+
+/* Ajustes para la imagen del logo */
+.logo {
+    width: 150px;            /* Ajusta el tamaño del logo (puedes cambiar este valor) */
+    height: auto;           /* Mantén la proporción del logo */
 }
 
+/* Contenedor del logo y el título */
+.logo-container {
+    display: flex;          /* Utilizamos flexbox */
+    align-items: center;    /* Alinea verticalmente los elementos en el centro */
+    justify-content: flex-start; /* Alinea los elementos al principio del contenedor (izquierda) */
+    gap: 10px;              /* Añade espacio entre el texto y la imagen */
+}
 
 
 
 /* Estilos de la aplicación (inicio) */
 .container {
-    max-width: 1200px;
     margin: 0 auto;
     padding: var(--espaciado);
 }
@@ -351,14 +348,14 @@ footer a:hover {
 
 /* Estilos del Login */
 
+
 .login {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    width: 400px;
     background-color: #f4f4f9;
     font-family: 'Poppins', sans-serif;
+    padding: 20px; /* Agrega espacio alrededor para pantallas pequeñas */
 }
 
 .login .container {
@@ -366,24 +363,20 @@ footer a:hover {
     padding: 2rem;
     border-radius: var(--borde-radius);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    max-width: 600px;
-    width: 100%;
+    max-width: 500px; /* Cambia a un máximo ancho responsivo */
+    width: 100%; /* Permite que el contenedor se ajuste al tamaño */
     text-align: center;
-    flex-grow: 1; /* Permite que la caja crezca si es necesario */
-}
-/* Contenedor del logo y el título */
-.logo-container {
-    display: flex;          /* Utilizamos flexbox */
-    align-items: center;    /* Alinea verticalmente los elementos en el centro */
-    justify-content: flex-start; /* Alinea los elementos al principio del contenedor (izquierda) */
-    gap: 10px;              /* Añade espacio entre el texto y la imagen */
 }
 
-/* Ajustes para la imagen del logo */
-.logo {
-    width: 40px;            /* Ajusta el tamaño del logo (puedes cambiar este valor) */
-    height: auto;           /* Mantén la proporción del logo */
+/* Media Query para pantallas más pequeñas */
+@media (max-width: 768px) {
+    .login .container {
+        padding: 1rem; /* Reduce el espaciado interno */
+    }
 }
+
+
+
 
 .login .logo-container {
     text-align: center;

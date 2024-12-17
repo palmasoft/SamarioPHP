@@ -15,7 +15,7 @@
                 <!-- Título del menú -->
                 <div class="menu-title">SamarioPHP</div>
                 <ul>
-                    <li><a href="{{config.app.url_base}}/login">Iniciar Sesión</a></li>
+                    <li><a href="{{config.app.url_base}}/inicio-sesion">Iniciar Sesión</a></li>
                     <li><a href="{{config.app.url_base}}/registro">Registrarse</a></li>
                 </ul>
             </nav>

@@ -4,16 +4,16 @@ define('DIR_SYS', __DIR__ . DIRECTORY_SEPARATOR);
 // Definir constantes para las rutas
 define('DIR_SPHP', DIR_SYS . '/samariophp/');
 define('DIR_APP', DIR_SPHP . '/aplicacion/');
+define('DIR_CONTROLADORES', DIR_APP . '/controladores/');
+define('DIR_MODELOS', DIR_APP . '/modelos');
+define('DIR_VISTAS', DIR_APP . '/vistas/html/');
 define('DIR_APP_SYS', DIR_SPHP . '/sistema/');
 define('DIR_ALMACEN', DIR_SPHP . '/almacen/');
 
 //RUTAS DEL FRAMEWORK
 define('RUTA_LIBRERIAS', DIR_SPHP . 'autoload.php');
-define('RUTA_ENRUTADOR', DIR_SPHP . 'rutas.php');
-define('RUTA_INSTALADOR', DIR_SPHP . 'instalador.php');
-define('DIR_CONTROLADORES', DIR_APP . '/controladores/');
-define('DIR_MODELOS', DIR_APP . '/modelos');
-define('DIR_VISTAS', DIR_APP . '/vistas/html/');
+define('RUTA_INSTALADOR', DIR_APP_SYS . 'instalador.php');
+define('RUTA_ENRUTADOR', DIR_APP_SYS . 'rutas/enrutador.php');
 
 //CONFIGURACIONES
 define('RUTA_CONFIGURACION', DIR_APP_SYS . 'configuracion.php');

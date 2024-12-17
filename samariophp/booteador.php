@@ -35,7 +35,7 @@ $GLOBALS['datos'] = $BaseDeDatos = $gestorDatos($configuracion, $loggers['aplica
 // 
 // Cargar rutas
 $rutas = require_once RUTA_ENRUTADOR;
-$rutas($aplicacion, $configuracion, $BaseDeDatos, $plantillas, $loggers['ejecucion']);
+$rutas($aplicacion, $configuracion, $BaseDeDatos, $plantillas, $loggers);
 //
 // Registro de inicio del sistema
 $loggers['aplicacion']->info('El sistema inició correctamente.');

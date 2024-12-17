@@ -1,6 +1,7 @@
 <?php
 
 class Usuario extends Modelo {
+  
     public function perfil() {
         return $this->tieneUn('Perfil', 'usuario_id');
     }

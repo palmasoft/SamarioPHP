@@ -5,106 +5,85 @@ use Psr\Http\Message\ResponseInterface as Respuesta;
 use Psr\Http\Message\ServerRequestInterface as Peticion;
 
 class AutenticacionControlador extends Controlador {
-  //
-  function mostrarInicioSesion(Peticion $peticion, Respuesta $respuesta) {
-    GestorLog::log('aplicacion', 'info', '[AUTENTICACION] Mostrando página de login', ['campos' => 'valores']);
-    $contenido = $this->plantillas->render('autenticacion/login.html.php', ["config" => $GLOBALS['config']]);
+//
+  function mostrarRegistro(Peticion $peticion, Respuesta $respuesta) {
+    GestorLog::log('aplicacion', 'info', '[AUTENTICACION] Mostrando página de registro');
+    $contenido = $this->plantillas->render('autenticacion/registro.html.php');
     $respuesta->getBody()->write($contenido);
     return $respuesta;
   }
 
-//
-//  function validarDatosUsuario(Peticion $peticion, Respuesta $respuesta) {
-//    global $loggerAplicacion, $BaseDeDatos, $plantillas;
-//    $loggerAplicacion->info('[AUTENTICACION] Procesando inicio de sesión');
-//    $datos = $peticion->getParsedBody();
-//    $correo = $datos['correo'] ?? '';
-//    $contrasena = $datos['contrasena'] ?? '';
-//
-//// Lógica para verificar las credenciales
-//    try {
-//      $usuario = $BaseDeDatos->select('usuarios', ['id', 'correo', 'contrasena'], ['correo' => $correo]);
-//
-//      if (count($usuario) > 0 && password_verify($contrasena, $usuario[0]['contrasena'])) {
-//        session_start();
-//        $_SESSION['usuario_id'] = $usuario[0]['id'];
-//        $_SESSION['usuario_correo'] = $usuario[0]['correo'];
-//
-//// Redirigir al inicio o a una página de perfil
-//        return $respuesta->withRedirect(RUTA_INICIO);
-//      } else {
-//        $loggerAplicacion->warning('[AUTENTICACION] Credenciales inválidas');
-//        return $respuesta->withRedirect('/login')->withStatus(401);
-//      }
-//    } catch (Exception $e) {
-//      $loggerAplicacion->error('[AUTENTICACION] Error al intentar iniciar sesión: ' . $e->getMessage());
-//      return $respuesta->withRedirect('/login')->withStatus(500);
-//    }
-//  }
-//
-//  function enviarCorreoVerificacion($email, $token) {
-//    $mailer = new Mailer();
-//    $asunto = 'Verificación de Correo';
-//    $cuerpo = 'Haz clic en el siguiente enlace para verificar tu correo: <a href="https://tu-dominio.com/verificar?token=' . $token . '">Verificar Correo</a>';
-//    $mailer->enviarCorreo($email, $asunto, $cuerpo);
-//  }
-//
-//  public function iniciarSesion() {
-//    // Verificar si el usuario ya está autenticado
-//    if ($this->sesion->estaAutenticado()) {
-//      return $this->redirigir('/dashboard');
-//    }
-//
-//    // Procesar la petición POST para iniciar sesión
-//    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-//      $correo = $_POST['correo'];
-//      $contrasena = $_POST['contrasena'];
-//
-//      // Buscar el usuario en la base de datos
-//      $usuario = Usuario::buscarPorCorreo($correo);
-//
-//      // Verificar contraseña
-//      if ($usuario && password_verify($contrasena, $usuario->contrasena)) {
-//        // Iniciar sesión
-//        $this->sesion->iniciar($usuario->id);
-//        return $this->redirigir('/dashboard');
-//      } else {
-//        return $this->mostrarVista('login', ['error' => 'Credenciales inválidas']);
-//      }
-//    }
-//
-//    return $this->mostrarVista('login');
-//  }
-//
-//  public function registrarUsuario() {
-//    // Procesar la petición POST para registrar un nuevo usuario
-//    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-//      $nombre = $_POST['nombre'];
-//      $correo = $_POST['correo'];
-//      $contrasena = $_POST['contrasena'];
-//
-//      // Validar datos del usuario (puedes agregar más validaciones)
-//      if (empty($nombre) || empty($correo) || empty($contrasena)) {
-//        return $this->mostrarVista('registro', ['error' => 'Todos los campos son requeridos']);
-//      }
-//
-//      // Crear un nuevo usuario
-//      $usuario = new Usuario();
-//      $usuario->nombre = $nombre;
-//      $usuario->correo = $correo;
-//      $usuario->contrasena = password_hash($contrasena, PASSWORD_DEFAULT);
-//      $usuario->guardar();
-//
-//      // Redirigir a la página de inicio de sesión
-//      return $this->redirigir('/login');
-//    }
-//
-//    return $this->mostrarVista('registro');
-//  }
-//
-//  public function cerrarSesion() {
-//    // Cerrar sesión
-//    $this->sesion->cerrar();
-//    return $this->redirigir('/login');
-//  }
+  function guardarDatosUsuario(Peticion $peticion, Respuesta $respuesta) {
+    GestorLog::log('aplicacion', 'info', '[AUTENTICACION] Procesando registro');
+
+// Aquí puedes manejar la lógica de registro (validar los datos y crear un nuevo usuario)
+// Procesar la petición POST para registrar un nuevo usuario
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+      $nombre = $_POST['nombre'];
+      $correo = $_POST['correo'];
+      $contrasena = $_POST['contrasena'];
+
+// Validar datos del usuario (puedes agregar más validaciones)
+      if (empty($nombre) || empty($correo) || empty($contrasena)) {
+        return $this->mostrarVista('registro', ['error' => 'Todos los campos son requeridos']);
+      }
+
+// Crear un nuevo usuario
+      $usuario = new Usuario();
+      $usuario->nombre = $nombre;
+      $usuario->correo = $correo;
+      $usuario->contrasena = password_hash($contrasena, PASSWORD_DEFAULT);
+      $usuario->guardar();
+
+// Redirigir a la página de inicio de sesión
+      return $this->redirigir('/login');
+    }
+
+    return $this->mostrarVista('registro');
+
+    $datos = $peticion->getParsedBody();
+    $correo = $datos['correo'] ?? '';
+    $contrasena = $datos['contrasena'] ?? '';
+
+// Crear el nuevo usuario en la base de datos
+
+    return $respuesta->withRedirect(RUTA_INICIO); // O redirigir a una página de éxito
+  }
+
+  function enviarCorreoVerificacion($email, $token) {
+    $mailer = new Mailer();
+    $asunto = 'Verificación de Correo';
+    $cuerpo = 'Haz clic en el siguiente enlace para verificar tu correo: <a href="https://tu-dominio.com/verificar?token=' . $token . '">Verificar Correo</a>';
+    $mailer->enviarCorreo($email, $asunto, $cuerpo);
+  }
+
+  function verificarCorreoElectronico(Peticion $peticion, Respuesta $respuesta, array $args) {
+    $token = $args['token'];
+
+// Verificar token en la base de datos y activar usuario
+    try {
+      $usuario = $baseDeDatos->select('usuarios', ['id', 'verificado'], ['token_verificacion' => $token]);
+
+      if (count($usuario) > 0 && !$usuario[0]['verificado']) {
+// Activar cuenta
+        $baseDeDatos->update('usuarios', ['verificado' => 1], ['id' => $usuario[0]['id']]);
+        $contenido = $this->plantillas->render('autenticacion/verificar_correo.html.php');
+      } else {
+        $contenido = $this->plantillas->render('autenticacion/error_verificacion.html.php');
+      }
+
+      $respuesta->getBody()->write($contenido);
+      return $respuesta;
+    } catch (Exception $e) {
+      $logger->error('[AUTENTICACION] Error al verificar correo: ' . $e->getMessage());
+      return $respuesta->withStatus(500);
+    }
+  }
+
+  function mostrarRecuperarClave(Peticion $peticion, Respuesta $respuesta) {
+    GestorLog::log('aplicacion', 'info', '[AUTENTICACION] Mostrando formulario para recuperar contraseña');
+    $contenido = $this->plantillas->render('autenticacion/recuperar_contrasena.html.php');
+    $respuesta->getBody()->write($contenido);
+    return $respuesta;
+  }
 }

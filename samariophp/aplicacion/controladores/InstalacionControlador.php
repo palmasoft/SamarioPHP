@@ -1,7 +1,5 @@
 <?php
-namespace SamarioPHP\Controladores; 
-\n
-
+namespace SamarioPHP\Controladores;
 use SamarioPHP\Ayudas\GestorLog;
 use Psr\Http\Message\ResponseInterface as Respuesta;
 use Psr\Http\Message\ServerRequestInterface as Peticion;
@@ -17,7 +15,7 @@ class InstalacionControlador extends Controlador {
       if (count($tablas) > 0) {
         $mensaje = 'La base de datos ya contiene tablas. Elimine las tablas existentes si desea realizar una nueva instalación.';
         $mensaje_tipo = 'error';
-        $this->logAplicacion->warning('[INSTALACIÓN] Tablas existentes detectadas.');
+        GestorLog::log('aplicacion', 'warning', '[INSTALACIÓN] Tablas existentes detectadas.');
       } else {
         $mensaje = 'Bienvenido al instalador de SamarioPHP. Presione \"Iniciar instalación\" para continuar.';
         $mensaje_tipo = 'iniciar_instalacion';
@@ -30,7 +28,7 @@ class InstalacionControlador extends Controlador {
 
       $respuesta->getBody()->write($contenido);
     } catch (Exception $e) {
-      $this->logAplicacion->error('[INSTALACIÓN] Error al verificar las tablas: ' . $e->getMessage());
+      GestorLog::log('aplicacion', 'error', '[INSTALACIÓN] Error al verificar las tablas: ' . $e->getMessage());
       throw $e;
     }
 

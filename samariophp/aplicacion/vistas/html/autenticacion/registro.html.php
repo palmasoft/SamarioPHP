@@ -4,34 +4,52 @@
 {% block encabezado %}{% endblock %}
 {% block contenido %}   
 
+<div class="login">
     <div class="contenedor">
-        <h1>Registro de Usuario</h1>
-        <?php if (isset($error)): ?>
+
+
+        <!-- Logo y nombre del framework -->
+        <div class="logo-container">
+            <h1>SamarioPHP</h1>
+            <img src="{{app.logo}}" alt="Logo {{app.alias}}" class="logo" />
+        </div>
+
+        <!-- Título e inicio de sesión -->
+        <div class="form-container">
+
+
+            <h2>Registro de Usuario</h2>
+            {% if (error) %}
             <div class="alerta-error">
-                <?php echo htmlspecialchars($error); ?>
+                {{ error }}
             </div>
-        <?php endif; ?>
-        <form method="POST" class="formulario-registro">
-            <div class="campo">
-                <label for="nombre">Nombre completo:</label>
-                <input type="text" name="nombre" id="nombre" required placeholder="Ingresa tu nombre">
-            </div>
-            <div class="campo">
-                <label for="correo">Correo electrónico:</label>
-                <input type="email" name="correo" id="correo" required placeholder="tucorreo@ejemplo.com">
-            </div>
-            <div class="campo">
-                <label for="contrasena">Contraseña:</label>
-                <input type="password" name="contrasena" id="contrasena" required placeholder="Contraseña segura">
-            </div>
-            <div class="campo">
-                <label for="recontrasena">Confirmar contraseña:</label>
-                <input type="password" name="recontrasena" id="recontrasena" required placeholder="Repite tu contraseña">
-            </div>
-            <button type="submit" class="btn-registrar">Registrar</button>
-        </form>
-        <p class="texto-secundario">
-            ¿Ya tienes una cuenta? <a href="/login">Inicia sesión</a>
-        </p>
+            {% endif %}
+            <form method="POST" class="formulario-registro">
+                <div class="campo">
+                    <label for="nombre">Nombre completo:</label>
+                    <input type="text" name="nombre" id="nombre" required placeholder="Ingresa tu nombre">
+                </div>
+                <div class="campo">
+                    <label for="correo">Correo electrónico:</label>
+                    <input type="email" name="correo" id="correo" required placeholder="tucorreo@ejemplo.com">
+                </div>
+                <div class="campo">
+                    <label for="contrasena">Contraseña:</label>
+                    <input type="password" name="contrasena" id="contrasena" required placeholder="Contraseña segura">
+                </div>
+                <div class="campo">
+                    <label for="recontrasena">Confirmar contraseña:</label>
+                    <input type="password" name="recontrasena" id="recontrasena" required placeholder="Repite tu contraseña">
+                </div>
+                <button type="submit" class="btn-registrar">Registrar</button>
+            </form>
+            <p class="texto-secundario">
+                ¿Ya tienes una cuenta? <a href="/inicio-sesion">Inicia sesión</a>
+            </p>
+
+
+        </div>
+        
     </div>
+</div>
 {% endblock %}

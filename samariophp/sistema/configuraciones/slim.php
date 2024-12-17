@@ -5,6 +5,8 @@ $loader = new \Twig\Loader\FilesystemLoader(DIR_VISTAS);
 $plantillas = new \Twig\Environment($loader, [
     'cache' => false, // O la ruta donde quieras guardar el caché
     ]);
+// Agregar la variable global 'config' con el valor de $GLOBALS['config']
+$plantillas->addGlobal('app', $GLOBALS['config']['aplicacion']);
 /**
  * Configuración de Slim para el framework.
  *

@@ -7,11 +7,20 @@ return function ($aplicacion, $logger) {
   // Ruta para la página de inicio
   $aplicacion->get(RUTA_INICIO, [new \SamarioPHP\Controladores\InicioControlador(), 'mostrarInicio']);
 
-  // Grupo de instalación
-  $aplicacion->group(RUTA_INSTALAR, function (RouteCollectorProxy $grupo) {
-    $grupo->get('', [\SamarioPHP\Controladores\InstalacionControlador::class, 'mostrarInstalacion']);
-    $grupo->post('', [\SamarioPHP\Controladores\InstalacionControlador::class, 'ejecutarInstalacion']);
-  });
+  // Verificar si ya está instalado
+  $archivoInstalacion = RUTA_LOGS . '/instalacion_completa.php'; // Ajusta la ruta si es necesario
+  if (file_exists($archivoInstalacion)) {
+    // Si ya está instalado, redirigir al índice
+    $aplicacion->get(RUTA_INSTALAR, function (Peticion $peticion, Respuesta $respuesta, $args) use ($aplicacion) {
+      return $respuesta->withRedirect(RUTA_INICIO);  // Redirige a la página de inicio
+    });
+  } else {
+    // Grupo de instalación
+    $aplicacion->group(RUTA_INSTALAR, function (RouteCollectorProxy $grupo) {
+      $grupo->get('', [\SamarioPHP\Controladores\InstalacionControlador::class, 'mostrarInstalacion']);
+      $grupo->post('', [\SamarioPHP\Controladores\InstalacionControlador::class, 'ejecutarInstalacion']);
+    });
+  }
 
   // Autenticación
   $aplicacion->get(

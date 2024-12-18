@@ -5,6 +5,9 @@
  */
 use SamarioPHP\BaseDeDatos\BaseDatos;
 return function ($configuracion, $logger) {
-  $Conexion = BaseDatos::iniciar($configuracion);
-  return $Conexion;
+  // Cargar configuración para Medoo desde una ruta definida
+  $configMedoo = require_once RUTA_CONFIG_MEEDO;
+
+  // Inicializar la conexión usando la configuración y devolverla
+  return BaseDatos::iniciar($configMedoo($configuracion));
 };

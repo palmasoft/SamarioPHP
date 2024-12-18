@@ -3,33 +3,106 @@ namespace SamarioPHP\BaseDeDatos;
 use Medoo\Medoo;
 
 class Conexion extends Medoo {
-  public function __construct($configuracion_global) {
-    $config = require RUTA_CONFIG_MEEDO; // Ruta a tu archivo de configuración
-    parent::__construct($config($configuracion_global));
+
+  private $tabla;
+  private $condiciones = [];
+  private $orden = [];
+  private $limite = [];
+  private $grupo = [];
+  private $joins = [];
+
+  public function __construct($config) {
+    parent::__construct($config);
   }
 
-  // Función predefinida para consultas SELECT
-  public function consultar($tabla, $condiciones = [], $columnas = '*') {
-    return $this->select($tabla, $columnas, $condiciones);
+  // Seleccionar tabla principal
+  public function tabla($nombre) {
+    $this->tabla = $nombre;
+    $this->resetConfiguraciones();
+    return $this;
   }
 
-  // Función predefinida para insertar datos
+  // Agregar condiciones WHERE
+  public function donde(array $condiciones) {
+    $this->condiciones = $condiciones;
+    return $this;
+  }
+
+  // Agregar orden ORDER BY
+  public function ordenadoPor(array $orden) {
+    $this->orden = $orden;
+    return $this;
+  }
+
+  // Limitar resultados LIMIT
+  public function limitado(array $limite) {
+    $this->limite = $limite;
+    return $this;
+  }
+
+  // Agregar agrupamiento GROUP BY
+  public function agrupadoPor(array $grupo) {
+    $this->grupo = $grupo;
+    return $this;
+  }
+
+  // Agregar uniones JOIN
+  public function unirCon(array $joins) {
+    $this->joins = $joins;
+    return $this;
+  }
+
+  // Ejecutar SELECT
+  public function seleccionar($columnas = '*') {
+    $opciones = [
+        'WHERE' => $this->condiciones,
+        'ORDER' => $this->orden,
+        'LIMIT' => $this->limite,
+        'GROUP' => $this->grupo,
+    ];
+
+    if (!empty($this->joins)) {
+      foreach ($this->joins as [$tabla, $condicion, $tipo]) {
+        $opciones['JOIN'][$tipo][$tabla] = $condicion;
+      }
+    }
+
+    $resultados = $this->select($this->tabla, $columnas, $opciones);
+    $this->resetConfiguraciones(); // Limpiar configuraciones después de la consulta
+    return $resultados;
+  }
+
+  // Consultas directas SQL
+  public function consultarSQL($consulta) {
+    return $this->query($consulta)->fetchAll();
+  }
+
+  // Contar registros
+  public function contar($condiciones = []) {
+    return $this->count($this->tabla, $condiciones ?: $this->condiciones);
+  }
+
+  // Insertar datos
   public function insertar($tabla, $datos) {
     return $this->insert($tabla, $datos);
   }
 
-  // Función predefinida para actualizar datos
+  // Actualizar datos
   public function actualizar($tabla, $datos, $condiciones) {
     return $this->update($tabla, $datos, $condiciones);
   }
 
-  // Función predefinida para eliminar datos
+  // Eliminar datos
   public function eliminar($tabla, $condiciones) {
     return $this->delete($tabla, $condiciones);
   }
 
-  // Función predefinida para contar registros
-  public function contar($tabla, $condiciones = []) {
-    return $this->count($tabla, $condiciones);
+  // Reiniciar configuraciones internas
+  private function resetConfiguraciones() {
+    $this->condiciones = [];
+    $this->orden = [];
+    $this->limite = [];
+    $this->grupo = [];
+    $this->joins = [];
   }
 }

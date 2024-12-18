@@ -1,7 +1,6 @@
 <?php
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
-use SamarioPHP\Ayudas\GestorLog;
 /**
  * Configuración de logs para la aplicación.
  *
@@ -25,10 +24,10 @@ return function () {
   $logEventos->pushHandler(new StreamHandler(RUTA_LOGS . '/eventos.log', Logger::INFO));
 
   // Configurar loggers
-  GestorLog::registrarLogger('aplicacion', $logAplicacion);
-  GestorLog::registrarLogger('servidor', $logServidor);
-  GestorLog::registrarLogger('ejecucion', $logEjecucion);
-  GestorLog::registrarLogger('eventos', $logEventos);
+  \GestorLog::registrarLogger('aplicacion', $logAplicacion);
+  \GestorLog::registrarLogger('servidor', $logServidor);
+  \GestorLog::registrarLogger('ejecucion', $logEjecucion);
+  \GestorLog::registrarLogger('eventos', $logEventos);
 
   // Retornar loggers configurados
   return [

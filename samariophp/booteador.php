@@ -2,9 +2,8 @@
 // Cargar la configuración
 require_once __DIR__ . '/../base.php';
 //cargar librerias de composer
-require_once RUTA_LIBRERIAS;
-//
-//
+require_once RUTA_LIBRERIAS; //
+//datos de configuracion global
 $configuracion = require_once RUTA_CONFIGURACION;
 // Validar configuración crítica
 $validador = require_once RUTA_CONFIG_VALIDACION;
@@ -29,8 +28,9 @@ $GLOBALS['aplicacion'] = $aplicacion = $slimConfig($configuracion, $plantillas, 
 //
 //
 // Configuración de Medoo para la base de datos
+// Inicialización del gestor de base de datos
 $gestorDatos = require_once RUTA_CONFIG_BASEDEDATOS;
-$GLOBALS['datos'] = $BaseDeDatos = $gestorDatos($configuracion, $loggers['aplicacion']); // Hacer disponible la conexión en todo el proyecto
+$GLOBALS['datos'] = $BaseDeDatos = $gestorDatos($configuracion, $loggers['aplicacion']); // Crear la conexión y hacerla global para todo el proyecto
 //
 // 
 // Cargar rutas

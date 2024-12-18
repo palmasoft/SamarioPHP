@@ -9,10 +9,8 @@ class InicioControlador extends Controlador {
 
     $this->logAplicacion->info('[INICIO] Verificando tablas en la base de datos...');
     try {
-         
       $tablas = \SamarioPHP\BaseDeDatos\BaseDatos::estaVacia();
-
-      if (count($tablas) > 0) {
+      if ($tablas > 0) {
         $mensaje = 'Todo está funcionando correctamente';
         $contenido = $this->plantillas->render(VISTA_INICIO, ['mensaje' => $mensaje]);
         $respuesta->getBody()->write($contenido);

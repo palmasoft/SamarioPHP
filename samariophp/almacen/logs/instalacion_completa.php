@@ -1,0 +1,1 @@
+?php // Instalación completada

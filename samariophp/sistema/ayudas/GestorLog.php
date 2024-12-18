@@ -1,5 +1,6 @@
 <?php
-namespace SamarioPHP\Ayudas;
+
+use Monolog\Logger;
 
 class GestorLog {
 

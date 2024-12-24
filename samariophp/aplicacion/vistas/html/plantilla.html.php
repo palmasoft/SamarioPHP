@@ -26,8 +26,8 @@
             <header class="header">
                 <div class="logo">
                     <img src="{{config.app.url_base}}imagenes/samarioPHP.png" alt="SamarioPHP Logo" class="logo-img">
-                    <h1>Bienvenido a SamarioPHP</h1>
                 </div>
+                <h1>Bienvenido a SamarioPHP</h1>
             </header>
             {% endblock %}
 

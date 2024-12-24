@@ -1,63 +1,58 @@
 <?php
-namespace SamarioPHP\Controladores;
-use SamarioPHP\Ayudas\GestorLog;
-use Psr\Http\Message\ResponseInterface as Respuesta;
-use Psr\Http\Message\ServerRequestInterface as Peticion;
+namespace SamarioPHP\Aplicacion\Controladores;
+
+use Psr\Http\Message\ResponseInterface as HTTPRespuesta;
+use Psr\Http\Message\ServerRequestInterface as HTTPSolicitud;
 
 class AutenticacionControlador extends Controlador {
-//
-  function mostrarRegistro(Peticion $peticion, Respuesta $respuesta) {
-    GestorLog::log('aplicacion', 'info', '[AUTENTICACION] Mostrando página de registro');
-    $contenido = $this->plantillas->render('autenticacion/registro.html.php');
-    $respuesta->getBody()->write($contenido);
-    return $respuesta;
+
+  //para los nuevos  
+  public function mostrarFormularioRegistro() {
+    return $this->renderizar('autenticacion/registro');
   }
 
-  function guardarDatosUsuario(Peticion $peticion, Respuesta $respuesta) {
-    GestorLog::log('aplicacion', 'info', '[AUTENTICACION] Procesando registro');
-
-// Aquí puedes manejar la lógica de registro (validar los datos y crear un nuevo usuario)
-// Procesar la petición POST para registrar un nuevo usuario
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-      $nombre = $_POST['nombre'];
-      $correo = $_POST['correo'];
-      $contrasena = $_POST['contrasena'];
-
-// Validar datos del usuario (puedes agregar más validaciones)
-      if (empty($nombre) || empty($correo) || empty($contrasena)) {
-        return $this->mostrarVista('registro', ['error' => 'Todos los campos son requeridos']);
-      }
-
-// Crear un nuevo usuario
-      $usuario = new Usuario();
-      $usuario->nombre = $nombre;
-      $usuario->correo = $correo;
-      $usuario->contrasena = password_hash($contrasena, PASSWORD_DEFAULT);
-      $usuario->guardar();
-
-// Redirigir a la página de inicio de sesión
-      return $this->redirigir('/login');
-    }
-
-    return $this->mostrarVista('registro');
+  public function procesarRegistro(HTTPSolicitud $peticion, HTTPRespuesta $respuesta) {
 
     $datos = $peticion->getParsedBody();
+    print_r($datos);
+    die();
+    $resultado = $this->sesionControlador->registrarUsuario($correo, $contrasena, $recontrasena, $params = []);
+
+    if ($resultado['error']) {
+      return $this->renderizar('autenticacion/registro', ['error' => $resultado['message']]);
+    }
+
+//    $this->enviarCorreoVerificacion($correo, $resultado['token']);
+    return $this->redirigir('/login');
+
+    GestorLog::log('aplicacion', 'info', '[AUTENTICACION] Procesando registro');
+    $datos = $peticion->getParsedBody();
+    $nombre = $datos['nombre'] ?? '';
     $correo = $datos['correo'] ?? '';
     $contrasena = $datos['contrasena'] ?? '';
 
-// Crear el nuevo usuario en la base de datos
+    if (empty($nombre) || empty($correo) || empty($contrasena)) {
+      return $respuesta->withStatus(400)->write("Todos los campos son requeridos");
+    }
 
-    return $respuesta->withRedirect(RUTA_INICIO); // O redirigir a una página de éxito
+    $usuario = new \Usuario();
+    $usuario->nombre = $nombre;
+    $usuario->correo = $correo;
+    $usuario->contrasena = password_hash($contrasena, PASSWORD_DEFAULT);
+    $usuario->guardar();
+
+    return $this->redirigir('/login');
   }
 
-  function enviarCorreoVerificacion($email, $token) {
-    $mailer = new Mailer();
+  public function enviarCorreoVerificacion($correo, $token) {
+    $mailer = new \PHPMailer();
     $asunto = 'Verificación de Correo';
-    $cuerpo = 'Haz clic en el siguiente enlace para verificar tu correo: <a href="https://tu-dominio.com/verificar?token=' . $token . '">Verificar Correo</a>';
-    $mailer->enviarCorreo($email, $asunto, $cuerpo);
+    $mensaje = "Haz clic en el siguiente enlace para verificar tu cuenta: " .
+        "<a href='{$this->config['url_base']}/verificar?token={$token}'>Verificar cuenta</a>";
+    $mailer->enviarCorreo($correo, $asunto, $mensaje);
   }
 
-  function verificarCorreoElectronico(Peticion $peticion, Respuesta $respuesta, array $args) {
+  function verificarCorreoElectronico(HTTPSolicitud $peticion, HTTPRespuesta $respuesta) {
     $token = $args['token'];
 
 // Verificar token en la base de datos y activar usuario
@@ -67,9 +62,9 @@ class AutenticacionControlador extends Controlador {
       if (count($usuario) > 0 && !$usuario[0]['verificado']) {
 // Activar cuenta
         $baseDeDatos->update('usuarios', ['verificado' => 1], ['id' => $usuario[0]['id']]);
-        $contenido = $this->plantillas->render('autenticacion/verificar_correo.html.php');
+        $contenido = $this->plantillas->render('autenticacion/verificar_correo');
       } else {
-        $contenido = $this->plantillas->render('autenticacion/error_verificacion.html.php');
+        $contenido = $this->plantillas->render('autenticacion/error_verificacion');
       }
 
       $respuesta->getBody()->write($contenido);
@@ -80,10 +75,91 @@ class AutenticacionControlador extends Controlador {
     }
   }
 
-  function mostrarRecuperarClave(Peticion $peticion, Respuesta $respuesta) {
+  //para los ya registrados
+  //iniciar
+  public function mostrarFormularioLogin(HTTPSolicitud $peticion, HTTPRespuesta $respuesta) {
+    $this->respuesta = $respuesta;
+    return $this->renderizar('autenticacion/login');
+  }
+
+  public function procesarLogin() {
+
+    $correo = \GestorHTTP::parametro('correo');
+    $contrasena = \GestorHTTP::parametro('contrasena');
+    $resultado = $this->sesionControlador->iniciarSesion($correo, $contrasena);
+
+    if ($resultado['error']) {
+      return $this->renderizar('autenticacion/login', ['error' => $resultado['message']]);
+    }
+
+    $_SESSION['usuario'] = $resultado['hash'];
+    return $this->redirigir('/dashboard');
+
+    GestorLog::log('aplicacion', 'info', '[AUTENTICACION] Iniciando sesión');
+    $datos = $peticion->getParsedBody();
+    $correo = $datos['correo'] ?? '';
+    $contrasena = $datos['contrasena'] ?? '';
+
+    // Verificar si el usuario ya está autenticado
+    if ($this->sesion->estaAutenticado()) {
+      return $this->redirigir('/dashboard');
+    }
+
+    $usuario = \Usuario::buscarPorCorreo($correo);
+    if (!$usuario || !password_verify($contrasena, $usuario->contrasena)) {
+      return $respuesta->withStatus(401)->write("Credenciales inválidas");
+    }
+
+
+    $controlador = new AutenticacionControlador();
+    $respuesta = $controlador->iniciarSesion($correo, $contrasena);
+    echo json_encode($respuesta);
+    try {
+      $usuario = New \Usuario($correo, $contrasena);
+
+      if (count($usuario) > 0 && password_verify($contrasena, $usuario[0]['contrasena'])) {
+        session_start();
+        $_SESSION['usuario_id'] = $usuario[0]['id'];
+        $_SESSION['usuario_correo'] = $usuario[0]['correo'];
+
+// Redirigir al inicio o a una página de perfil
+        return $respuesta->withRedirect(RUTA_INICIO);
+      } else {
+        $loggerAplicacion->warning('[AUTENTICACION] Credenciales inválidas');
+        return $respuesta->withRedirect('/login')->withStatus(401);
+      }
+    } catch (Exception $e) {
+      $loggerAplicacion->error('[AUTENTICACION] Error al intentar iniciar sesión: ' . $e->getMessage());
+      return $respuesta->withRedirect('/login')->withStatus(500);
+    }
+
+    $_SESSION['usuario_id'] = $usuario->id;
+    return $this->redirigir('/dashboard');
+  }
+
+  //salir
+  public function cerrarSesion(HTTPSolicitud $peticion, HTTPRespuesta $respuesta) {
+
+
+    if (isset($_SESSION['usuario'])) {
+      $this->sesionControlador->cerrarSesion($_SESSION['usuario']);
+      unset($_SESSION['usuario']);
+    }
+    return $this->redirigir('/login');
+
+    // Cerrar sesión
+    $this->sesion->cerrar();
+
+    GestorLog::log('aplicacion', 'info', '[AUTENTICACION] Sesión cerrada');
+    return $this->redirigir('/');
+  }
+
+  //gestion
+  function mostrarRecuperarClave(HTTPSolicitud $peticion, HTTPRespuesta $respuesta) {
     GestorLog::log('aplicacion', 'info', '[AUTENTICACION] Mostrando formulario para recuperar contraseña');
-    $contenido = $this->plantillas->render('autenticacion/recuperar_contrasena.html.php');
+    $contenido = $this->plantillas->render('autenticacion/recuperar_contrasena');
     $respuesta->getBody()->write($contenido);
     return $respuesta;
   }
+
 }

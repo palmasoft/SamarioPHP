@@ -11,7 +11,7 @@
         <!-- Logo y nombre del framework -->
         <div class="logo-container">
             <h1>SamarioPHP</h1>
-            <img src="{{app.logo}}" alt="Logo {{app.alias}}" class="logo" />
+            <a href="{{app.url_base}}"><img src="{{app.logo}}" alt="Logo {{app.alias}}" class="logo" /></a>
         </div>
 
         <!-- Título e inicio de sesión -->
@@ -31,15 +31,15 @@
                 </div>
                 <div class="campo">
                     <label for="correo">Correo electrónico:</label>
-                    <input type="email" name="correo" id="correo" required placeholder="tucorreo@ejemplo.com">
+                    <input type="email" name="correo" id="correo" required placeholder="tucorreo@ejemplo.com" autocomplete="username"  />
                 </div>
                 <div class="campo">
                     <label for="contrasena">Contraseña:</label>
-                    <input type="password" name="contrasena" id="contrasena" required placeholder="Contraseña segura">
+                    <input type="password" name="contrasena" id="contrasena" required placeholder="Contraseña segura"  autocomplete="new-password">
                 </div>
                 <div class="campo">
                     <label for="recontrasena">Confirmar contraseña:</label>
-                    <input type="password" name="recontrasena" id="recontrasena" required placeholder="Repite tu contraseña">
+                    <input type="password" name="recontrasena" id="recontrasena" required placeholder="Repite tu contraseña" autocomplete="new-password" >
                 </div>
                 <button type="submit" class="btn-registrar">Registrar</button>
             </form>
@@ -49,7 +49,7 @@
 
 
         </div>
-        
+
     </div>
 </div>
 {% endblock %}

@@ -8,7 +8,7 @@
         <!-- Logo y nombre del framework -->
         <div class="logo-container">
             <h1>SamarioPHP</h1>
-            <img src="{{app.logo}}" alt="Logo {{app.alias}}" class="logo" />
+            <a href="{{app.url_base}}"><img src="{{app.logo}}" alt="Logo {{app.alias}}" class="logo" /></a>
         </div>
 
         <!-- Título e inicio de sesión -->

@@ -14,6 +14,10 @@ class GeneradorMigraciones {
    * @param array $estructura Estructura de la tabla, incluyendo campos y relaciones.
    */
   public static function generarMigracion($tabla, $estructura) {
+// Verificar si la carpeta de migraciones existe, si no, crearla
+    if (!is_dir(DIR_MIGRACIONES)) {
+      mkdir(DIR_MIGRACIONES, 0777, true); // Crear la carpeta si no existe
+    }
 
     // Inicia el archivo de migración
     $migracion = "<?php\n\n";
@@ -71,8 +75,18 @@ class GeneradorMigraciones {
   }
 
   private static function guardarMigracion($tabla, $migracion) {
+    
+        // Verificar si ya existe un archivo con el mismo nombre (nombre basado en la tabla)
+    $archivosExistentes = glob(DIR_MIGRACIONES . "/*_" . $tabla . ".php");
+
+    if (!empty($archivosExistentes)) {
+        // Si ya existe un archivo con el mismo nombre, mostrar un mensaje de advertencia
+        echo "Aviso: Ya existe una migración para la tabla '$tabla'. Se está utilizando un archivo de migración ya existente.\n";
+        return $archivosExistentes[0]; // Retorna el primer archivo que coincide
+    }
+    
     // Genera la versión de migración
-    $version = Utilidades::generarIndicadorVersionPHINX(); 
+    $version = Utilidades::generarIndicadorVersionPHINX();
 // Verificar si ya existe un archivo con el mismo indicador de versión (antes de _migracion_)
     $contador = 1;
     while (true) {
@@ -80,12 +94,12 @@ class GeneradorMigraciones {
       $existeArchivo = false;
 
       // Escanea todos los archivos en la carpeta de migraciones
-      $archivosMigracion = Archivos::buscarArchivosPorPalabra(DIR_MIGRACIONES, $version); 
+      $archivosMigracion = Archivos::buscarArchivosPorPalabra(DIR_MIGRACIONES, $version);
 
       // Si hay archivos que comienzan con la misma versión, incrementar el contador
       if (!empty($archivosMigracion)) {
         $existeArchivo = true;
-      } 
+      }
 
       // Si no existe un archivo con la misma versión, salir del bucle
       if (!$existeArchivo) {

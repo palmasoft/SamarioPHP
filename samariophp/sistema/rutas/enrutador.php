@@ -2,8 +2,9 @@
 // Gestion de Rutas
 use Slim\Routing\RouteCollectorProxy;
 // Gestion de Peticiones y Respuestas HTTP//
-use Psr\Http\Message\ResponseInterface as Respuesta;
-use Psr\Http\Message\ServerRequestInterface as Peticion;
+use Psr\Http\Message\ResponseInterface as HTTPRespuesta;
+use Psr\Http\Message\ServerRequestInterface as HTTPSolicitud;
+
 //
 //
 return function ($aplicacion, $configuracion, $BaseDeDatos, $plantillas, $loggers) {

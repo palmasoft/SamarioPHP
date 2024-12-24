@@ -1,5 +1,6 @@
 <?php
 use Slim\Factory\AppFactory;
+
 // Configurar Twig para las plantillas y vistas
 $loader = new \Twig\Loader\FilesystemLoader(DIR_VISTAS);
 $plantillas = new \Twig\Environment($loader, [
@@ -25,6 +26,7 @@ return function ($configuracion, $plantillas) {
         $respuesta->getBody()->write($contenido);
         return $respuesta->withStatus(404);
       });
+  
 
   return $aplicacion;
 };

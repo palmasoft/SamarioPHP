@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Scripting/PHPClass.php to edit this template
  */
-namespace SamarioPHP\Controladores;
+namespace SamarioPHP\Aplicacion\Controladores;
 
 /**
  * Description of UsuariosControlador
@@ -24,5 +24,4 @@ class UsuariosControlador extends Controlador {
     $respuesta->getBody()->write('Crear un usuario');
     return $respuesta;
   }
-  
 }

@@ -43,6 +43,7 @@ define('RUTA_GENERAR_MIGRACIONES_MODELOS', DIR_BASE_DATOS . 'generador/Generador
 // Definir constantes para las vistas fijas o inicialse
 define('VISTA_INICIO', 'inicio.html.php');
 define('VISTA_INSTALACION', 'instalacion/preparacion.html.php');
+define('VISTA_INSTALACION_TERMINADA', 'instalacion/completada.html.php');
 define('VISTA_404', '404.html.php');
 
 // Definir rutas generales

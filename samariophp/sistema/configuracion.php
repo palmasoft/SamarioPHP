@@ -22,6 +22,34 @@ return [
         'logo' => '/imagenes/samarioPHP.png',
         'entorno' => 'desarrollo', // 'desarrollo' o 'produccion'
     ],
+    
+    "enviador_correos" => [
+        'email_from' => 'no-reply@cogeunnumero.com',
+        'email_method' => 'smtp',
+        'smtp' => [
+            'host' => '162.240.97.33',
+            'auth' => true,
+            'username' => 'app@cogeunnumero.com',
+            'password' => 'KM]LI]X;JDwb',
+            'secure' => 'tls',
+            'port' => 465,
+        ],
+    ],
+    
+    "autenticador" => [
+        'site_name' => 'SamarioPHP',
+        'site_url' => 'https://app.cogeunnumero.com/',
+        'email_from' => 'no-reply@cogeunnumero.com',
+        'email_method' => 'smtp',
+        'smtp' => [
+            'host' => '162.240.97.33',
+            'auth' => true,
+            'username' => 'app@cogeunnumero.com',
+            'password' => 'KM]LI]X;JDwb',
+            'secure' => 'tls',
+            'port' => 465,
+        ],
+    ],
     'archivos' => [
     ]
 ];

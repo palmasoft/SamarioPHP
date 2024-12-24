@@ -5,7 +5,7 @@ return [
         'campos' => [
             'nombre' => ['tipo' => 'string'],
             'correo' => ['tipo' => 'string'],
-            'clave' => ['tipo' => 'string'],
+            'contrasena' => ['tipo' => 'string'],
             'correo_verificado' => ['tipo' => 'boolean', 'opciones' => ['default' => false]],
             'token_verificacion' => ['tipo' => 'string', 'opciones' => ['longitud' => 64, 'null' => true]],
             'token_recuperacion' => ['tipo' => 'string', 'opciones' => ['longitud' => 64, 'null' => true]],

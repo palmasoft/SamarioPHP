@@ -10,5 +10,5 @@ return function ($configuracion, $logger) {
   $configMedoo = require_once RUTA_CONFIG_MEEDO;
   $conexion = BaseDatos::iniciar($configMedoo($configuracion));
   // Inicializar la conexión usando la configuración y devolverla
-  return BaseDatos::class;
+  return $conexion;
 };

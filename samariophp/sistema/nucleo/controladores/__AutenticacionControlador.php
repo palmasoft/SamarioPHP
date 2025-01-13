@@ -14,9 +14,7 @@ class AutenticacionControlador extends Controlador {
   public function procesarRegistro(HTTPSolicitud $peticion, HTTPRespuesta $respuesta) {
 
     $datos = $peticion->getParsedBody();
-    print_r($datos);
-    die();
-    $resultado = $this->sesionControlador->registrarUsuario($correo, $contrasena, $recontrasena, $params = []);
+    $resultado = $this->sesionControlador->registrarUsuario($datos['correo'], $datos['contrasena'], $datos['recontrasena'], $datos);
 
     if ($resultado['error']) {
       return $this->renderizar('autenticacion/registro', ['error' => $resultado['message']]);

@@ -28,12 +28,27 @@ $GLOBALS['errores'] = $gestorErrores($configuracion, $loggers['servidor']);
 $gestorDatos = require_once RUTA_CONFIG_BASEDEDATOS;
 $GLOBALS['datos'] = $baseDeDatos = $gestorDatos($configuracion, $loggers['aplicacion']); // Crear la conexión y hacerla global para todo el proyecto
 //
+//
 // Configuración de Slim
 $slimConfig = require_once RUTA_CONFIG_SLIM;
 $GLOBALS['aplicacion'] = $aplicacion = $slimConfig($configuracion, $plantillas, $loggers['aplicacion']);
 ///
+//
+//
+
+
+use SamarioPHP\Aplicacion\Servicios\Autenticacion;
+use SamarioPHP\Aplicacion\Servicios\CorreoElectronico;
+// Crear los servicios necesarios
+$autenticacionServicio = new Autenticacion();  // Servicio de autenticación
+$correoElectronicoServicio = new CorreoElectronico();  // Servicio de envío de correos electrónicos
+
+
+//
+//
+//
 ///
-$aplicacion->add(new \SamarioPHP\Middleware\MiddlewareGestorHTTP());
+$aplicacion->add(new \SamarioPHP\Middleware\GestorHTTPMiddleware());
 $aplicacion->add(new \SamarioPHP\Middleware\VerificarInstalacionMiddleware($baseDeDatos, $loggers['aplicacion']));
 // 
 // Cargar rutas

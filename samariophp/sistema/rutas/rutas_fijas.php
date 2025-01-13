@@ -28,7 +28,7 @@ return function ($aplicacion, $logger) {
   $aplicacion->get(RUTA_USUARIO_VERFICACION, [AutenticacionControlador::class, 'verificarCorreoElectronico']);
 
   // Recuperación de contraseña
-  $aplicacion->get(RUTA_USUARIO_RECUPERAR_CLAVE, [AutenticacionControlador::class, 'mostrarRecuperarClave']);
+  $aplicacion->get(RUTA_USUARIO_RECUPERAR_CLAVE, [AutenticacionControlador::class, 'mostrarFormularioRecuperarClave']);
 
   // Inicio y cierre de sesión
   $aplicacion->get(RUTA_USUARIO_ENTRAR, [AutenticacionControlador::class, 'mostrarFormularioLogin']);

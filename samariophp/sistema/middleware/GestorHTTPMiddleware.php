@@ -6,7 +6,7 @@ use Psr\Http\Message\ServerRequestInterface as HTTPSolicitud;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class MiddlewareGestorHTTP implements MiddlewareInterface {
+class GestorHTTPMiddleware implements MiddlewareInterface {
 
     public function process(HTTPSolicitud $request, RequestHandlerInterface $handler): HTTPRespuesta {
 

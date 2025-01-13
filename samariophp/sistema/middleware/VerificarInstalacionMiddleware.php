@@ -20,7 +20,7 @@ class VerificarInstalacionMiddleware {
     $this->logger->info('[MIDDLEWARE] Verificando tablas en la base de datos...');
     
     try {
-      if ($this->baseDeDatos::estaVacia() === 0) {
+      if ($this->baseDeDatos->estaVacia() === 0) {
         $this->logger->warning('[MIDDLEWARE] No se encontraron tablas. Redirigiendo a instalación.');
         $tocaInstalar = true;
       }

@@ -1,7 +1,7 @@
 <?php
 
 // app/correos/Correo.php
-class Correo {
+class CorreoModelo {
 
   protected $para;
   protected $asunto;

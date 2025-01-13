@@ -2,13 +2,34 @@
 namespace SamarioPHP\Ayudas;
 
 class Utilidades {
-  /**
-   * Convierte un nombre de tabla a una clase en PascalCase.
-   * 
-   * @param string $nombreTabla El nombre de la tabla en snake_case.
-   * @param bool $singular Si debe convertirlo a singular.
-   * @return string El nombre en formato PascalCase.
-   */
+
+  public static function obtenerUltimoSegmento($cadena) {
+    // Dividir la cadena por el separador '\'
+    $partes = explode('\\', $cadena);
+
+    // Obtener el último elemento del array resultante
+    return end($partes);
+  }
+
+  public static function convertirNombreClaseATabla($nombreClase, $plural = true) {
+    // Obtener el último segmento que corresponde a la entidad
+    $nombreEntidad = self::obtenerUltimoSegmento($nombreClase);
+
+    // Convertir la entidad a plural si es necesario
+    if ($plural) {
+      // Usamos una simple regla de pluralización (si el nombre termina en 's', no lo cambiamos)
+      if (substr($nombreEntidad, -1) === 's') {
+        $nombreTabla = $nombreEntidad; // Ya está en plural
+      } else {
+        $nombreTabla = $nombreEntidad . 's'; // Agregar 's' al final
+      }
+    } else {
+      $nombreTabla = $nombreEntidad; // Devolver el nombre en singular
+    }
+
+    return $nombreTabla;
+  }
+
   /**
    * Convierte un nombre de tabla a una clase en PascalCase, asegurándose de que todas las palabras sean singulares.
    * 
@@ -91,4 +112,5 @@ class Utilidades {
 
     return $fecha . $sufijoUnico; // Generar versión de exactamente 14 caracteres
   }
+
 }

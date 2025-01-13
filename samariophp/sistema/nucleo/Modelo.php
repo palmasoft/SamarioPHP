@@ -1,4 +1,5 @@
 <?php
+namespace SamarioPHP\Aplicacion\Modelos;
 
 class Modelo {
 
@@ -8,9 +9,11 @@ class Modelo {
   protected $conexion;
 
   public function __construct($id = null) {
-    $this->conexion = $GLOBALS['db'];
+    $this->conexion = $GLOBALS['datos']->conexion;
     $this->id = $id;
-    $this->tabla = strtolower(get_class($this)) . 's';  // Tabla en plural
+    $this->tabla = \SamarioPHP\Ayudas\Utilidades::convertirNombreClaseATabla(strtolower(get_class($this)));  // Tabla en plural
+
+    print_r($this);
 
     if ($id) {
       $registro = $this->conexion->get($this->tabla, "*", ["id" => $id]);
@@ -100,6 +103,7 @@ class Modelo {
 
   // Obtener el usuario actual (ajústalo a tu sistema de autenticación)
   private static function obtenerUsuarioActual() {
-    return Auth::usuario()->id ?? null;
+    return $GLOBALS['autenticacionServicio']->usuarioID ?? null;
   }
+
 }

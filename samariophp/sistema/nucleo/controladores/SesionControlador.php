@@ -1,73 +1,97 @@
 <?php
 namespace SamarioPHP\Aplicacion\Controladores;
 
-use SamarioPHP\BaseDeDatos\BaseDatos;
-use PHPAuth\Auth;
-use PHPAuth\Config as AuthConfig;
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception; // Si usas excepciones personalizadas de PHPMailer
+use SamarioPHP\Aplicacion\Servicios\Autenticacion;
+use SamarioPHP\Aplicacion\Servicios\CorreoElectronico;
 
 class SesionControlador {
 
-  protected $auth;
+  protected $autenticacion;
+  protected $correoServicio;
 
-  public function __construct() {
-    // Obtener la conexión Medoo
-    $baseDeDatos = BaseDatos::iniciar($GLOBALS['config']['base_de_datos']); // Esto debe devolver una instancia de Medoo
-    // Obtener el objeto PDO desde Medoo
-    $pdo = $baseDeDatos->pdo;
-    // Crear instancia de configuración de PHPAuth
-    $config = new AuthConfig($pdo);
-    // Configuración personalizada de tablas
-//    $config->set('table_users', 'usuarios');
-//    $config->set('table_sessions', 'sesiones');
-//    $config->set('phpauth_config', 'configuracion_phpauth');
-    // Crear instancia de Auth con la configuración
-    $this->auth = new Auth($pdo, $config);
-  }
-
-  public function iniciarSesion($correo, $contrasena) {
-    return $this->auth->login($correo, $contrasena);
-  }
-
-  public function cerrarSesion($hash) {
-    return $this->auth->logout($hash);
+  public function __construct(Autenticacion $autenticacion, CorreoElectronico $correoServicio) {
+    $this->autenticacion = $autenticacion;
+    $this->correoServicio = $correoServicio;
   }
 
   public function registrarUsuario($correo, $contrasena, $rcontrasena, $params = []) {
-    return $this->auth->register($correo, $contrasena, $rcontrasena, $params ?? []);
-  }
+    try {
+      if ($contrasena !== $rcontrasena) {
+        throw new \Exception("Las contraseñas no coinciden.");
+      }
 
-  public function verificarUsuario($token) {
-    return $this->auth->verify($token);
+      $token = $this->autenticacion->registrar($correo, $contrasena, $params['nombre'] ?? null);
+
+      // Enviar correo de verificación
+      $asunto = "Verifica tu correo";
+      $cuerpo = "Haz clic en el siguiente enlace para verificar tu cuenta: <a href='https://tudominio.com/verificar?token={$token}'>Verificar cuenta</a>";
+      $this->correoServicio->enviarCorreo($correo, $asunto, $cuerpo);
+
+      return ['exito' => true, 'mensaje' => 'Usuario registrado y correo enviado'];
+    } catch (\Exception $e) {
+      return ['exito' => false, 'mensaje' => $e->getMessage()];
+    }
   }
 
   public function recuperarContrasena($correo) {
-    return $this->auth->requestReset($correo);
+    try {
+      $token = $this->autenticacion->recuperarContrasena($correo);
+
+      // Enviar correo con el token de recuperación
+      $asunto = "Recuperación de contraseña";
+      $cuerpo = "Haz clic en el siguiente enlace para restablecer tu contraseña: <a href='https://tudominio.com/restablecer?token={$token}'>Restablecer contraseña</a>";
+      $this->correoServicio->enviarCorreo($correo, $asunto, $cuerpo);
+
+      return ['exito' => true, 'mensaje' => 'Correo de recuperación enviado'];
+    } catch (\Exception $e) {
+      return ['exito' => false, 'mensaje' => $e->getMessage()];
+    }
   }
 
-  public function restablecerContrasena($token, $nuevaContrasena) {
-    return $this->auth->resetPass($token, $nuevaContrasena, $nuevaContrasena);
+  public function verificarUsuario($token) {
+    try {
+      $this->autenticacion->verificarCorreo($token);
+      return ['exito' => true, 'mensaje' => 'Correo verificado correctamente'];
+    } catch (\Exception $e) {
+      return ['exito' => false, 'mensaje' => $e->getMessage()];
+    }
   }
 
   public function iniciar($correo, $contrasena) {
-    $resultado = $this->auth->login($correo, $contrasena);
+    try {
+      $resultado = $this->autenticacion->iniciarSesion($correo, $contrasena);
 
-    if ($resultado['error']) {
-      return ['exito' => false, 'mensaje' => $resultado['message']];
+      if (!$resultado) {
+        return ['exito' => false, 'mensaje' => 'Inicio de sesión fallido'];
+      }
+
+      return ['exito' => true, 'mensaje' => 'Inicio de sesión exitoso'];
+    } catch (\Exception $e) {
+      return ['exito' => false, 'mensaje' => $e->getMessage()];
     }
-
-    $_SESSION['usuario'] = $resultado['hash'];
-    return ['exito' => true, 'mensaje' => 'Inicio de sesión exitoso'];
   }
 
   public function cerrar() {
-    if (isset($_SESSION['usuario'])) {
+    try {
       session_start();
-      session_unset();
-      session_destroy();
-      $this->auth->logout($_SESSION['usuario']);
-      unset($_SESSION['usuario']);
+      if (isset($_SESSION['usuario_id'])) {
+        $this->autenticacion->cerrarSesion();
+        session_unset();
+        session_destroy();
+        return ['exito' => true, 'mensaje' => 'Sesión cerrada'];
+      }
+      return ['exito' => false, 'mensaje' => 'No hay sesión activa'];
+    } catch (\Exception $e) {
+      return ['exito' => false, 'mensaje' => $e->getMessage()];
+    }
+  }
+
+  public function restablecerContrasena($token, $nuevaContrasena) {
+    try {
+      $this->autenticacion->restablecerContrasena($token, $nuevaContrasena);
+      return ['exito' => true, 'mensaje' => 'Contraseña restablecida'];
+    } catch (\Exception $e) {
+      return ['exito' => false, 'mensaje' => $e->getMessage()];
     }
   }
 

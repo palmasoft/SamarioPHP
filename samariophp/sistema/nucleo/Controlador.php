@@ -14,8 +14,10 @@ class Controlador {
   protected $logEventos;
   protected $aplicacion;
   protected $plantillas;
-  protected $sesionControlador;
+  protected $sesion;
+  protected $correos;
   protected $respuesta;
+  protected $datos;
 
   // Constructor donde se cargan los datos globales 
   public function __construct() {
@@ -27,16 +29,61 @@ class Controlador {
     $this->logEventos = $GLOBALS['loggers']['eventos'];
     $this->aplicacion = $GLOBALS['aplicacion'];
     $this->plantillas = $GLOBALS['plantillas'];
-//    $this->respuesta = $this->aplicacion->response();
-    $this->sesionControlador = new SesionControlador();
+    $this->sesion = $GLOBALS['autenticacionServicio'];
+    $this->correos = $GLOBALS['correoElectronicoServicio'];
+    // Cargar datos de \GestorHTTP::$datos y convertirlos en propiedades de la clase
+    $this->cargarDatos(\GestorHTTP::$datos);
   }
 
-  // MÃ©todo para acceder a la configuraciÃ³n global
+  // Método para cargar los datos y convertirlos en propiedades
+  private function cargarDatos($datos = null) {
+    if (!is_null($datos)) {
+      foreach ($datos as $key => $value) {
+        // Asignar los datos al array interno
+        $this->datos[$key] = $value;
+      }
+    }
+  }
+
+  // Método mágico __get para acceder a los datos como si fueran propiedades
+  public function __get($name) {
+    // Devuelve el valor si existe, si no, retorna null
+    return isset($this->datos[$name]) ? $this->datos[$name] : null;
+  }
+
+  // Método mágico __set para asignar valores a los datos como si fueran propiedades
+  public function __set($name, $value) {
+    // Asigna el valor al array interno
+    $this->datos[$name] = $value;
+  }
+
+  // Método para mostrar todos los datos
+  public function mostrarDatos() {
+    print_r($this->datos);
+  }
+
+// Método para verificar si existe un dato específico
+  public function tieneDato($name) {
+    return isset($this->$name); // Verifica si la propiedad existe
+  }
+
+  // Método para verificar si múltiples datos existen
+  public function tieneDatos(array $keys) {
+    // Verifica si todos los datos existen usando isset()
+    foreach ($keys as $key) {
+      if (!isset($this->$key)) {
+        return false;  // Si alguna propiedad no existe, retorna false
+      }
+    }
+    return true;  // Todos los datos existen
+  }
+
+  //Metodo para acceder a la configuraciÃ³n global
   public function obtenerConfig($clave) {
     return $this->config[$clave] ?? null;
   }
 
-  // MÃ©todo de ejemplo para manejar la solicitud
+  //Metodo de ejemplo para manejar la solicitud
   public function manejarSolicitud() {
     $urlBase = $this->obtenerConfig('url_base');
     $this->logAplicacion->info("URL Base: {$urlBase}");
@@ -44,7 +91,7 @@ class Controlador {
             ->withBody("URL Base: {$urlBase}");
   }
 
-  // MÃ©todo de ejemplo para manejar la respuesta
+  //Metodo de ejemplo para manejar la respuesta
   public function enviarRespuesta($mensaje) {
     // AquÃ­ puedes usar los objetos de logs o el objeto de Slim para la respuesta
     $this->loggerAplicacion->info($mensaje);

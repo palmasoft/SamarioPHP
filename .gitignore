@@ -21,4 +21,8 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+error_log
+archivos.php
+correos.php
+ejemplos.php
 samariophp/sistema/configuracion.php

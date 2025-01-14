@@ -11,12 +11,53 @@ class Autenticacion {
     return isset($_SESSION['usuario_id']) ? $_SESSION['usuario_id'] : null;
   }
 
-  public function cerrarSesion() {
-    session_start();
-    session_unset();
-    session_destroy();
-    return true;
+  public function registrar($correo, $contrasena, $nombre = null) {
+    // Crear una nueva instancia del modelo Usuario
+    $usuario = new Usuario();
+
+    // Rellenar los datos y guardar
+    $usuario->rellenar([
+        'correo' => $correo,
+        'contrasena' => password_hash($contrasena, PASSWORD_BCRYPT),
+        'nombre' => $nombre,
+    ]);
+    $usuario->guardar();
+    return $usuario;
   }
+
+  public function verificarCorreo($token) {
+    $usuario = Usuario::porTokenVerificacion($token) ?? null;
+    if (!$usuario) {
+      throw new \Exception("Token no válido.");
+    }
+
+    if ($usuario->correo_verificado) {
+      throw new \Exception('El correo ya estaba verificado.');
+    }
+
+    // Usar el modelo Usuario para actualizar
+    $usuario->verificarCorreo();
+    $usuario->guardar();
+    return $usuario;
+  }
+
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+  //
+
 
   public function iniciarSesion($correo, $contrasena) {
     // Usar el modelo Usuario para buscar al usuario
@@ -37,35 +78,20 @@ class Autenticacion {
     return true;
   }
 
-  public function registrar($correo, $contrasena, $nombre = null) {
-    // Crear una nueva instancia del modelo Usuario
-    $usuario = new Usuario();
-
-    // Rellenar los datos y guardar
-    $usuario->rellenar([
-        'correo' => $correo,
-        'contrasena' => password_hash($contrasena, PASSWORD_BCRYPT),
-        'nombre' => $nombre,
-    ]);
-    $usuario->guardar();
-
+  public function cerrarSesion() {
+    session_start();
+    session_unset();
+    session_destroy();
     return true;
   }
 
-  public function verificarCorreo($token) {
-    $usuario = Usuario::donde('token_verificacion', '=', $token)[0] ?? null;
-
-    if (!$usuario) {
-      throw new \Exception("Token no válido.");
-    }
-
-    // Usar el modelo Usuario para actualizar
-    $usuario->rellenar(['correo_verificado' => 1]);
-    $usuario->guardar();
-
-    return true;
-  }
-
+  //
+  //
+  //
+  //
+  //
+  //
+  //
   public function recuperarContrasena($correo) {
     $usuario = Usuario::donde('correo', '=', $correo)[0] ?? null;
 

@@ -3,14 +3,6 @@ namespace SamarioPHP\Aplicacion\Modelos;
 
 class Usuario extends Modelo {
 
-  // Propiedades del usuario
-  public $nombre;
-  public $correo;
-  public $contrasena;
-  public $token_verificacion;
-  public $correo_verificado;
-  public $token_recuperacion;
-
   // Método para obtener un usuario por correo (único)
   public static function porCorreo($correo) {
     return self::donde('correo', '=', $correo)[0] ?? null;
@@ -18,7 +10,7 @@ class Usuario extends Modelo {
 
   // Método para obtener un usuario por token de verificación
   public static function porTokenVerificacion($token) {
-    return self::donde('token_verificacion', '=', $token)[0] ?? null;
+    return self::buscarPorEstatico('token_verificacion', $token) ?? null;
   }
 
   // Método para obtener un usuario por token de recuperación de contraseña
@@ -33,8 +25,7 @@ class Usuario extends Modelo {
       $this->token_verificacion = bin2hex(random_bytes(16));  // Token de verificación único
       $this->correo_verificado = 0;
     }
-
-    parent::guardar();  // Llamar al método guardar del modelo base
+    parent::guardar();  // Llamar al método guardar del modelo base    
   }
 
   // Método para verificar el correo (cambiar estado de correo_verificado)
@@ -44,7 +35,11 @@ class Usuario extends Modelo {
     $this->guardar();
   }
 
-  // Método para restablecer la contraseña del usuario
+  //
+  // 
+  //  
+  //   
+  //   Método para restablecer la contraseña del usuario
   public function restablecerContrasena($nuevaContrasena) {
     $this->contrasena = password_hash($nuevaContrasena, PASSWORD_BCRYPT);
     $this->token_recuperacion = null;

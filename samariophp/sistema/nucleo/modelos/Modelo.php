@@ -10,21 +10,15 @@ class Modelo {
 
   public function __construct($id = null) {
     $this->conexion = $GLOBALS['datos']->conexion;
-    $this->id = $id;
     $this->tabla = \SamarioPHP\Ayudas\Utilidades::convertirNombreClaseATabla(strtolower(get_class($this)));  // Tabla en plural
-
-    print_r($this);
-
-    if ($id) {
-      $registro = $this->conexion->get($this->tabla, "*", ["id" => $id]);
-      if ($registro) {
-        $this->datos = $registro;
-      }
+    $this->id = ($id ?? $this->id);
+    if ($this->id) {
+      $this->actualizarDatos();
     }
   }
 
   public function __get($propiedad) {
-    return $this->datos[$propiedad] ?? null;
+    return $this->datos[$propiedad] ?? "no existe";
   }
 
   public function __set($propiedad, $valor) {
@@ -37,7 +31,8 @@ class Modelo {
     }
   }
 
-  public function existe() {
+  public function existe($id = null) {
+    $this->id = ($id ?? $this->id);
     return isset($this->id) && $this->conexion->has($this->tabla, ["id" => $this->id]);
   }
 
@@ -51,6 +46,20 @@ class Modelo {
       $this->datos['creado_por'] = $usuarioId;
       $this->conexion->insert($this->tabla, $this->datos);
       $this->id = $this->conexion->id();
+    }
+    // Cargar los datos más recientes del usuario después de la inserción/actualización
+    $this->actualizarDatos();
+
+  }
+
+  // Método para actualizar los datos del objeto después de guardar
+  private function actualizarDatos() {
+    // Aquí puedes realizar una consulta a la base de datos para obtener los datos más recientes del usuario
+    $datosActualizados = $this->conexion->get($this->tabla, '*', ['id' => $this->id]);
+
+    // Asignar los datos actualizados al objeto
+    if (!empty($datosActualizados)) {
+      $this->datos = $datosActualizados;
     }
   }
 
@@ -101,9 +110,40 @@ class Modelo {
     ]);
   }
 
+  public function buscarPor($campo, $valor) {
+    // Validar que los parámetros sean correctos
+    if (empty($campo) || empty($valor)) {
+      throw new \InvalidArgumentException("El campo y el valor son obligatorios para realizar la búsqueda.");
+    }
+
+    // Realizar la consulta a la base de datos
+    $resultado = $this->conexion->get($this->tabla, '*', [$campo. " LIKE " => $valor]);
+
+    // Si no se encuentra el registro, lanzar una excepción
+    if (!$resultado) {
+      throw new \RuntimeException("No se encontró ningún registro con {$campo} igual a {$valor} en la tabla {$this->tabla}.");
+    }
+
+    // Asignar los datos encontrados al modelo actual
+    $this->id = $resultado['id'] ?? null;
+    $this->rellenar($resultado);
+
+    return $this; // Devuelve la instancia actual para encadenar métodos si es necesario
+  }
+
+// Método estático para buscar sin crear una instancia previa
+  public static function buscarPorEstatico($campo, $valor) {
+    // Crear una nueva instancia del modelo
+    $clase = get_called_class();
+    $instancia = new $clase();
+
+    // Usar el método buscarPor en la instancia creada
+    return $instancia->buscarPor($campo, $valor);
+  }
+
   // Obtener el usuario actual (ajústalo a tu sistema de autenticación)
   private static function obtenerUsuarioActual() {
-    return $GLOBALS['autenticacionServicio']->usuarioID ?? null;
+    return $GLOBALS['autenticacionServicio']->usuarioID ?? 0;
   }
 
 }

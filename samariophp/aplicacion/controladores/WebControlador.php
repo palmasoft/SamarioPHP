@@ -12,5 +12,13 @@ class WebControlador extends Controlador {
     $mensaje = "Mensjae de Bienvenida.";
     return $this->renderizar('inicio', ['mensaje' => $mensaje]);
   }
+  
+  
+  // Acción para mostrar la página de inicio
+  public function mostrarPanelAdministracion() {
+    // Suponiendo que $this->logAplicacion y otras dependencias están correctamente configuradas
+    $mensaje = "Mensaje de Bienvenida.";
+    return $this->renderizar('admin/principal', ['mensaje' => $mensaje]);
+  }
 
 }

@@ -19,9 +19,10 @@
             <form action="/recuperar-contrasena" method="POST">
                 <label for="correo">Correo electrónico</label>
                 <input type="email" id="correo" name="correo" required placeholder="Ingrese su correo electrónico">
-                <button type="submit">Enviar instrucciones</button>
+                
+                <button type="submit" class="btn-primary">Enviar instrucciones</button>
             </form>
-            <p><a href="/login">Volver al inicio de sesión</a></p>
+            <p><a href="/inicio-sesion">Volver al inicio de sesión</a></p>
 
         </div>
     </div>

@@ -29,6 +29,10 @@ $gestorDatos = require_once RUTA_CONFIG_BASEDEDATOS;
 $GLOBALS['datos'] = $baseDeDatos = $gestorDatos($configuracion, $loggers['aplicacion']); // Crear la conexión y hacerla global para todo el proyecto
 //
 //
+// Configuración de Twig
+$twigConfig = require_once RUTA_CONFIG_TWIG;
+$GLOBALS['plantillas'] = $plantillas = $twigConfig($configuracion, $loggers['aplicacion']);
+///
 // Configuración de Slim
 $slimConfig = require_once RUTA_CONFIG_SLIM;
 $GLOBALS['aplicacion'] = $aplicacion = $slimConfig($configuracion, $plantillas, $loggers['aplicacion']);
@@ -38,12 +42,13 @@ $GLOBALS['aplicacion'] = $aplicacion = $slimConfig($configuracion, $plantillas, 
 
 
 use SamarioPHP\Aplicacion\Servicios\Autenticacion;
-use SamarioPHP\Aplicacion\Servicios\CorreoElectronico;
 // Crear los servicios necesarios
-$autenticacionServicio = new Autenticacion();  // Servicio de autenticación
-$correoElectronicoServicio = new CorreoElectronico();  // Servicio de envío de correos electrónicos
+$GLOBALS['autenticacion'] = $autenticacionServicio = new Autenticacion();  // Servicio de autenticación
 
-
+use SamarioPHP\Aplicacion\Servicios\CorreoElectronico;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+$GLOBALS['enviador_correos'] = $correoElectronicoServicio = new CorreoElectronico($configuracion);  // Servicio de envío de correos electrónicos
 //
 //
 //

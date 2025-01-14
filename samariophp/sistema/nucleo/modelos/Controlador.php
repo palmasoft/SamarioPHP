@@ -101,7 +101,7 @@ class Controlador {
   // Renderizar vistas
   public function renderizar(string $vista, array $datos = []): HTTPRespuesta {
     $this->respuesta = \GestorHTTP::obtenerRespuesta();
-    $archivo_vista = $vista . '.html.php';
+    $archivo_vista = $vista . VISTA_EXTENSION;
     if (!file_exists(DIR_VISTAS . $archivo_vista)) {
       throw new \Exception("La vista '{$archivo_vista}' no existe.");
     }
@@ -112,6 +112,7 @@ class Controlador {
 
   // Redirigir a una URL
   public function redirigir(string $url): HTTPRespuesta {
+    $this->respuesta = \GestorHTTP::obtenerRespuesta();
     return $this->respuesta->withHeader('Location', $url)->withStatus(302);
   }
 

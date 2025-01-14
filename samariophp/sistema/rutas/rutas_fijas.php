@@ -17,7 +17,7 @@ return function ($aplicacion, $logger) {
 
   // Ruta para la página web publica - el HOME
   $aplicacion->get(RUTA_INICIO, [WebControlador::class, 'mostrarInicio']);
-
+  
   // Grupo de rutas para autenticación
 //  $aplicacion->group(RUTA_USUARIO, function (RouteCollectorProxy $grupo) {
   // Registro
@@ -25,7 +25,7 @@ return function ($aplicacion, $logger) {
   $aplicacion->post(RUTA_USUARIO_REGISTRO, [AutenticacionControlador::class, 'procesarRegistro']);
 
   // Verificación de correo
-  $aplicacion->get(RUTA_USUARIO_VERFICACION, [AutenticacionControlador::class, 'verificarCorreoElectronico']);
+  $aplicacion->get(RUTA_USUARIO_VERIFICACION, [AutenticacionControlador::class, 'verificarCorreoElectronico']);
 
   // Recuperación de contraseña
   $aplicacion->get(RUTA_USUARIO_RECUPERAR_CLAVE, [AutenticacionControlador::class, 'mostrarFormularioRecuperarClave']);
@@ -34,6 +34,7 @@ return function ($aplicacion, $logger) {
   $aplicacion->get(RUTA_USUARIO_ENTRAR, [AutenticacionControlador::class, 'mostrarFormularioLogin']);
   $aplicacion->post(RUTA_USUARIO_ENTRAR, [AutenticacionControlador::class, 'procesarLogin']);
   $aplicacion->post(RUTA_USUARIO_SALIR, [AutenticacionControlador::class, 'cerrarSesion']);
+  $aplicacion->get(RUTA_USUARIO_INICIO, [WebControlador::class, 'mostrarPanelAdministracion']);
 //  });
 
   $logger->info('[RUTAS FIJAS] Rutas principales registradas.');

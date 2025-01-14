@@ -4,8 +4,7 @@ class Correo {
 
   private $vista;
   private $datos;
-  private $correos;
-  private $aplicacion;
+  private $enviador;
   private $plantillas;
   public $asunto;
   public $para;
@@ -21,15 +20,15 @@ class Correo {
     $this->mensaje = $this->plantillas->render($this->vista . VISTA_EXTENSION, $this->datos);
 
     // Inicializar PHPMailer
-    $this->correos = $GLOBALS['enviador_correos'];
+    $this->enviador = $GLOBALS['enviador_correos'];
   }
 
   public function enviar() {
     try {
-      $this->correos->enviarCorreo($this->para, $this->asunto, $this->mensaje);
-      return $this->correos;
+      $this->enviador->enviarCorreo($this->para, $this->asunto, $this->mensaje);
+      return $this->enviador;
     } catch (\PHPMailer\PHPMailer\Exception $e) {
-      return "Error al enviar correo: {$this->correos->ErrorInfo}";
+      return "Error al enviar correo: {$this->enviador->ErrorInfo}";
     }
   }
 

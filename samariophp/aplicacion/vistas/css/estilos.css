@@ -80,20 +80,16 @@ header {
     text-align: center;
 }
 
-header .logo {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+section {
+    background: #fff;
+    padding: var(--espaciado);
+    margin-bottom: 20px;
+    border-radius: var(--borde-radius);
+    box-shadow: var(--sombra-secundaria);
 }
 
-header .logo h1 {
-    font-size: 28px;
-    margin-top: 10px;
-}
 
-header .logo .logo-img {
-    width: 150px;
-}
+
 
 label {
     display: block;
@@ -234,8 +230,26 @@ footer a:hover {
 }
 
 
-/* Estilos de la aplicación (inicio) */
-.contenedor {
+/* Estilos de la aplicación  */
+
+.container {
+    margin: 0 auto;
+    padding: var(--espaciado);
+}
+
+
+.container_600 {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+
+.contenedor_800 {
     background: #fff;
     padding: var(--espaciado);
     border-radius: var(--borde-radius);
@@ -248,31 +262,33 @@ footer a:hover {
     overflow-y: auto;
 }
 
-.container {
-    max-width: 600px;
-    margin: 50px auto;
-    padding: 20px;
-    text-align: center;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-}
-
-.container {
-    margin: 0 auto;
-    padding: var(--espaciado);
-}
 
 .main-content {
     margin-top: 30px;
 }
 
-.intro, .features, .credits {
+
+
+.encabezado .logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.encabezado .logo h1 {
+    font-size: 28px;
+    margin-top: 10px;
+}
+
+.encabezado .logo .logo-img {
+    width: 150px;
+}
+
+
+
+.intro, .features, .credits, .system-details {
     background: #fff;
-    padding: var(--espaciado);
-    margin-bottom: 20px;
-    border-radius: var(--borde-radius);
-    box-shadow: var(--sombra-secundaria);
+    animation-delay: 1234;
 }
 
 .features ul {

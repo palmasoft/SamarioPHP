@@ -5,24 +5,33 @@ use Phinx\Seed\AbstractSeed;
 class DatosInicialesSeeder extends AbstractSeed {
   public function run(): void { // Tipo de retorno void añadido
     $roles = [
-        ['id' => 1, 'nombre' => 'Administrador', 'descripcion' => 'Control total del sistema.', 'creado_por' => 1, 'fecha_creacion' => date('Y-m-d H:i:s')],
-        ['id' => 2, 'nombre' => 'Usuario', 'descripcion' => 'Usuario estándar del sistema.', 'creado_por' => 1, 'fecha_creacion' => date('Y-m-d H:i:s')],
+        ['id' => 1, 'nombre' => 'Administrador', 'descripcion' => 'Control total del sistema.', 'creado_por' => 0, 'fecha_creacion' => date('Y-m-d H:i:s')],
+        ['id' => 2, 'nombre' => 'Usuario', 'descripcion' => 'Usuario estándar del sistema.', 'creado_por' => 0, 'fecha_creacion' => date('Y-m-d H:i:s')],
     ];
 
     $permisos = [
-        ['id' => 1, 'nombre' => 'gestionar_usuarios', 'descripcion' => 'Administrar los usuarios del sistema.', 'creado_por' => 1, 'fecha_creacion' => date('Y-m-d H:i:s')],
-        ['id' => 2, 'nombre' => 'editar_roles', 'descripcion' => 'Editar los roles del sistema.', 'creado_por' => 1, 'fecha_creacion' => date('Y-m-d H:i:s')],
-        ['id' => 3, 'nombre' => 'ver_dashboard', 'descripcion' => 'Acceder al panel principal.', 'creado_por' => 1, 'fecha_creacion' => date('Y-m-d H:i:s')],
+        ['id' => 1, 'nombre' => 'gestionar_usuarios', 'descripcion' => 'Administrar los usuarios del sistema.', 'creado_por' => 0, 'fecha_creacion' => date('Y-m-d H:i:s')],
+        ['id' => 2, 'nombre' => 'editar_roles', 'descripcion' => 'Editar los roles del sistema.', 'creado_por' => 0, 'fecha_creacion' => date('Y-m-d H:i:s')],
+        ['id' => 3, 'nombre' => 'ver_dashboard', 'descripcion' => 'Acceder al panel principal.', 'creado_por' => 0, 'fecha_creacion' => date('Y-m-d H:i:s')],
     ];
 
     $usuarios = [
+        [
+            'id' => 0,
+            'nombre' => 'SamarioPHP',
+            'correo' => 'app@samariophp.com',
+            'contrasena' => password_hash('S4m4r1@PHP', PASSWORD_DEFAULT),
+            'correo_verificado' => 1,
+            'creado_por' => 0,
+            'fecha_creacion' => date('Y-m-d H:i:s')
+        ],
         [
             'id' => 1,
             'nombre' => 'Administrador',
             'correo' => 'admin@dominio.com',
             'contrasena' => password_hash('admin123', PASSWORD_DEFAULT),
             'correo_verificado' => 1,
-            'creado_por' => 1,
+            'creado_por' => 0,
             'fecha_creacion' => date('Y-m-d H:i:s')
         ],
     ];

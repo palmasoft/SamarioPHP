@@ -103,7 +103,7 @@ class Controlador {
     $this->respuesta = \GestorHTTP::obtenerRespuesta();
     $archivo_vista = $vista . VISTA_EXTENSION;
     if (!file_exists(DIR_VISTAS . $archivo_vista)) {
-      throw new \Exception("La vista '{$archivo_vista}' no existe.");
+      throw new \Exception("La vista '{$archivo_vista}' no existe para la ruta [".DIR_VISTAS."{$archivo_vista}]. ");
     }
     $html = $this->plantillas->render($archivo_vista, $datos);
     $this->respuesta->getBody()->write($html);

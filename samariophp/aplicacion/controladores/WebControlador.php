@@ -10,7 +10,7 @@ class WebControlador extends Controlador {
   public function mostrarInicio() {
     // Suponiendo que $this->logAplicacion y otras dependencias están correctamente configuradas
     $mensaje = "Mensjae de Bienvenida.";
-    return $this->renderizar('inicio', ['mensaje' => $mensaje]);
+    return $this->renderizar( VISTA_INICIO , ['mensaje' => $mensaje]);
   }
   
   
@@ -18,7 +18,7 @@ class WebControlador extends Controlador {
   public function mostrarPanelAdministracion() {
     // Suponiendo que $this->logAplicacion y otras dependencias están correctamente configuradas
     $mensaje = "Mensaje de Bienvenida.";
-    return $this->renderizar('admin/principal', ['mensaje' => $mensaje]);
+    return $this->renderizar(VISTA_ADMIN, ['mensaje' => $mensaje]);
   }
 
 }

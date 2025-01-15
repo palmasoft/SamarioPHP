@@ -44,14 +44,23 @@ define('RUTA_GENERAR_MIGRACIONES_MODELOS', DIR_BASE_DATOS . 'generador/Generador
 
 // Definir constantes para las vistas fijas o inicials
 define('VISTA_EXTENSION', '.html.php');
-define('VISTA_INICIO', 'inicio'.VISTA_EXTENSION);
-define('VISTA_INSTALACION', 'instalacion/preparacion'.VISTA_EXTENSION);
-define('VISTA_INSTALACION_TERMINADA', 'instalacion/completada'.VISTA_EXTENSION);
 define('VISTA_404', '404'.VISTA_EXTENSION);
 
 // Definir rutas generales
+//
+//
 define('RUTA_INICIO', '/');   // Ruta para la página de inicio
+define('VISTA_INICIO', 'web/inicio'); 
+//
+//
 define('RUTA_INSTALAR', '/instalacion');  // Ruta para la instalación
+define('VISTA_INSTALACION', 'instalacion/preparacion'.VISTA_EXTENSION);
+define('VISTA_INSTALACION_TERMINADA', 'instalacion/completada'.VISTA_EXTENSION);
+//
+//
+define('RUTA_ADMIN', '/panel-principal');   // Ruta para la página de inicio
+define('VISTA_ADMIN', 'admin/panel/principal');
+//   
 // gestion de autenticacion
 define('RUTA_USUARIO_LOGIN', '/login');
 define('RUTA_USUARIO_ENTRAR', '/inicio-sesion');

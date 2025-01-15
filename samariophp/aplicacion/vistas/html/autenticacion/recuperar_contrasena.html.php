@@ -17,9 +17,10 @@
             <h2>Recuperación de Contraseña</h2>
             
             <form action="/recuperar-contrasena" method="POST">
+                <div class="form-group">
                 <label for="correo">Correo electrónico</label>
                 <input type="email" id="correo" name="correo" required placeholder="Ingrese su correo electrónico">
-                
+                </div>
                 <button type="submit" class="btn-primary">Enviar instrucciones</button>
             </form>
             <p><a href="/inicio-sesion">Volver al inicio de sesión</a></p>

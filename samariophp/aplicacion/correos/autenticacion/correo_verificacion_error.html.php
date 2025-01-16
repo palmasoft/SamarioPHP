@@ -1,19 +1,12 @@
-{% extends 'plantilla.html.php' %}
-{% block title %}Inicio de Sesión{% endblock %}
-{% block menu %}{% endblock %}
-{% block encabezado %}{% endblock %}
-{% block contenido %}   
-
-    <title>Error de Verificación</title>
-    <link rel="stylesheet" href="/publico/css/estilos.css">
-</head>
-<body>
-    <div class="container">
-        <h2>Error de Verificación</h2>
-        <p>Hubo un problema al verificar tu correo. Por favor, intenta nuevamente o contacta con soporte.</p>
-        <p><a href="/inicio-sesion">Volver al inicio de sesión</a></p>
-    </div>
-</body>
-</html>
-
+{% extends 'plantilla.correo.php' %}
+{% block asunto %}Error en Verificación{% endblock %}
+{% block mensaje %}   
+<div>
+    <h1>Hola, {{ nombre }}</h1>
+    <p>Detectamos un problema al verificar tu correo en <strong>{{ nombre_proyecto }}</strong>.</p>
+    <p>Por favor, intenta nuevamente o contáctanos si el problema persiste.</p>
+    <p>Soporte: <a href="{{ url_soporte }}">{{ url_soporte }}</a></p>
+    <p>Gracias por confiar en nosotros.</p>
+    <p>Saludos,<br>El equipo de {{ nombre_proyecto }}</p>
+</div>
 {% endblock %}

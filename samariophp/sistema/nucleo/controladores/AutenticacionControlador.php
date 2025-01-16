@@ -8,6 +8,8 @@ use Psr\Http\Message\ServerRequestInterface as HTTPSolicitud;
 
 class AutenticacionControlador extends Controlador {
 
+  private $token;
+
   /**
    * Muestra el formulario de registro
    */
@@ -67,6 +69,7 @@ class AutenticacionControlador extends Controlador {
         'enlace_verificacion' => $enlace,
         'nombre_proyecto' => $this->config['aplicacion']['nombre'],
         'anio' => date('Y'),
+        'correo_contacto' => $this->config['aplicacion']['correo_contacto'],
     ]);
     $Correo->asunto = "Verificación de correo [{$Usuario->correo}] - {$this->config['aplicacion']['nombre']}";
     $Correo->destinatario($Usuario->correo, $Usuario->nombre);
@@ -101,12 +104,11 @@ class AutenticacionControlador extends Controlador {
   public function verificarCorreoElectronico() {
     try {
       $this->token = \GestorHTTP::parametro('token');
-
       // Validar token y verificar el correo
       $resultado = $this->actualizarVerficacionCorreo($this->token);
 
       if ($resultado['error']) {
-        // Token no válido o expirado
+        // Token no válido o expirado        
         return $this->renderizar('autenticacion/verificar_correo_error', ['mensaje' => $resultado['message'] ?? 'No se pudo verificar el correo.']);
       }
 
@@ -114,7 +116,6 @@ class AutenticacionControlador extends Controlador {
         return $this->renderizar('autenticacion/verificar_correo_error', ['mensaje' => 'El correo ya estaba verificado previamente.']);
       }
 
-      // Verificación exitosa
       return $this->renderizar('autenticacion/verificar_correo_exito', ['mensaje' => 'Correo verificado exitosamente. ¡Gracias por confirmar tu dirección!']);
     } catch (\Exception $e) {
       // Manejar errores inesperados
@@ -131,15 +132,52 @@ class AutenticacionControlador extends Controlador {
 
       // Intentar verificar el correo con el token
       $Usuario = $this->sesion->verificarCorreo($token);
-
       if ($Usuario) {
-        return ['error' => false, 'correo_verificado' => false, 'message' => 'Correo del Usuario verificado.'];
+        $this->enviarCorreoBienvenida($Usuario);
+        return ['error' => false, 'correo_verificado' => false, 'message' => 'Correo del Usuario verificado.', 'Usuario' => $Usuario];
       }
 
-      return ['error' => true, 'message' => 'No se pudo verificar el correo.'];
+      $this->enviarCorreoErrorVerificacion($Usuario);
+      return ['error' => true, 'message' => 'No se pudo verificar el correo.', 'Usuario' => $Usuario];
     } catch (\Exception $e) {
       return ['error' => true, 'message' => $e->getMessage()];
     }
+  }
+
+  /**
+   * Envía un correo de bienvenida después de verificar el correo
+   */
+  public function enviarCorreoBienvenida($Usuario) {
+
+    $Correo = new \Correo('bienvenida', [
+        'nombre' => $Usuario->nombre,
+        'nombre_proyecto' => $this->config['aplicacion']['nombre'],
+        'anio' => date('Y'),
+        'url_base' => $this->config['aplicacion']['url_base'],
+        'correo_contacto' => $this->config['aplicacion']['correo_contacto'],
+    ]);
+    $Correo->asunto = "¡Bienvenido a {$this->config['aplicacion']['nombre']}!";
+    $Correo->destinatario($Usuario->correo, $Usuario->nombre);
+    return $Correo->enviar();
+  }
+
+  // 
+  //  
+  /**
+   * Envía un correo notificando un fallo en la verificación del correo
+   */
+  public function enviarCorreoErrorVerificacion($Usuario) {
+
+    $Correo = new \Correo('autenticacion/correo_error_verificacion', [
+        'nombre' => $Usuario->nombre,
+        'nombre_proyecto' => $this->config['aplicacion']['nombre'],
+        'anio' => date('Y'),
+        'url_soporte' => "{$this->config['aplicacion']['url_base']}/soporte",
+        'correo_contacto' => $this->config['aplicacion']['correo_contacto'],
+    ]);
+    $Correo->asunto = "Problema con la verificación de tu correo - {$this->config['aplicacion']['nombre']}";
+    $Correo->destinatario($Usuario->correo, $Usuario->nombre);
+    return $Correo->enviar();
   }
 
   //

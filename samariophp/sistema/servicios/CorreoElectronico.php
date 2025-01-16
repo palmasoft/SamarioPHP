@@ -9,7 +9,6 @@ class CorreoElectronico {
   protected $mailer;
   protected $app;
   private $config;
-  public static $modoENVIO = 'DESARROLLO';
   public static $remitenteNOMBRE = null;
   public static $remitenteCORREO = null;
   public static $responderNOMBRE = null;
@@ -24,29 +23,29 @@ class CorreoElectronico {
 
   private function configurar() {
 
-    if (self::$modoENVIO == 'DESARROLLO') {
-      $this->mailer->SMTPDebug = 4;
-    }
-
     $this->mailer->isSMTP();
     $this->mailer->Host = $this->config['smtp']['host']; // Servidor SMTP
-    $this->mailer->SMTPAuth = $this->config['smtp']['auth'];
+    $this->mailer->Port = $this->config['smtp']['port']; // Puerto SMTP    
     $this->mailer->SMTPSecure = $this->config['smtp']['secure'];
+    $this->mailer->SMTPAuth = $this->config['smtp']['auth'];
     $this->mailer->Username = $this->config['smtp']['username']; // Usuario SMTP
-    $this->mailer->Password = $this->config['smtp']['password']; // Contraseña SMTP
-    $this->mailer->Port = $this->config['smtp']['port']; // Puerto SMTP
-    $this->mailer->setFrom($this->config['email_from'], $this->app['nombre']); // Remitente
+    $this->mailer->Password = $this->config['smtp']['password']; // Contraseña SMTP    
+
+    $this->mailer->CharSet = $this->config['email_charset'];
+    $this->mailer->Encoding = $this->config['email_codificacion'];
+    $this->mailer->setFrom($this->config['email_enviadopor'], $this->app['nombre']); // Remitente
 
     $this->mailer->SMTPDebug = $this->config['debug'];
   }
 
   public function enviarCorreo($destinatario, $asunto, $cuerpo, $esHTML = true) {
     try {
-      
+
       $this->mailer->isHTML($esHTML);
       $this->mailer->addAddress($destinatario[0], $destinatario[1] ?? "destinatario sin nombre" );
-      $this->mailer->Subject = $asunto ?? "sin asunto";
+      $this->mailer->Subject = mb_convert_encoding($asunto, 'UTF-8', 'auto') ?? "sin asunto";
       $this->mailer->Body = $cuerpo;
+      $this->mailer->AltBody = \Utilidades::convertirHtmlATexto($cuerpo);
 
       if (!$this->mailer->send()) {
         throw new \Exception('Error al enviar el correo: ' . $this->mailer->ErrorInfo);

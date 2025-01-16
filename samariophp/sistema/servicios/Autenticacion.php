@@ -3,6 +3,7 @@ namespace SamarioPHP\Aplicacion\Servicios;
 
 use SamarioPHP\BaseDeDatos\BaseDatos;
 use SamarioPHP\Aplicacion\Modelos\Usuario; // Importa el modelo Usuario
+use SamarioPHP\Aplicacion\Modelos\Perfil;
 
 class Autenticacion {
 
@@ -13,16 +14,18 @@ class Autenticacion {
 
   public function registrar($correo, $contrasena, $nombre = null) {
     // Crear una nueva instancia del modelo Usuario
-    $usuario = new Usuario();
-
+    $Usuario = new Usuario();
     // Rellenar los datos y guardar
-    $usuario->rellenar([
-        'correo' => $correo,
-        'contrasena' => password_hash($contrasena, PASSWORD_BCRYPT),
-        'nombre' => $nombre,
-    ]);
-    $usuario->guardar();
-    return $usuario;
+    $Usuario->correo = $correo;
+    $Usuario->contrasena = password_hash($contrasena, PASSWORD_BCRYPT);
+    $Usuario->nombre = \Utilidades::generarNombreUsuario($nombre);
+    $Usuario->nuevo();
+
+    $Usuario->Perfil = new Perfil();
+    $Usuario->Perfil->nombre_completo = $nombre;
+    $Usuario->Perfil->guardar();
+
+    return $Usuario;
   }
 
   public function verificarCorreo($token) {

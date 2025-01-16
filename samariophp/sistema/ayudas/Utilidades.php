@@ -1,8 +1,25 @@
 <?php
-namespace SamarioPHP\Ayudas;
 
 class Utilidades {
 
+  public static function convertirHtmlATexto($html) {
+    // Quitar etiquetas HTML y decodificar caracteres especiales
+    $textoPlano = strip_tags($html);
+    $textoPlano = html_entity_decode($textoPlano, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+    // Opcional: Formatear mejor las líneas (agregar saltos después de párrafos)
+    $textoPlano = preg_replace('/\s+/', ' ', $textoPlano); // Eliminar espacios extra
+    $textoPlano = preg_replace('/(\r?\n)+/', "\n", $textoPlano); // Normalizar saltos de línea
+
+    return trim($textoPlano);
+  }
+
+  /**
+   * Obtiene el último segmento de una cadena separada por '\' (barra invertida).
+   * 
+   * @param string $cadena La cadena con segmentos separados por '\'.
+   * @return string El último segmento de la cadena.
+   */
   public static function obtenerUltimoSegmento($cadena) {
     // Dividir la cadena por el separador '\'
     $partes = explode('\\', $cadena);
@@ -11,23 +28,65 @@ class Utilidades {
     return end($partes);
   }
 
-  public static function convertirNombreClaseATabla($nombreClase, $plural = true) {
-    // Obtener el último segmento que corresponde a la entidad
-    $nombreEntidad = self::obtenerUltimoSegmento($nombreClase);
+  /**
+   * Convierte un nombre de clase en PascalCase a un nombre de tabla en snake_case.
+   * 
+   * @param string $nombreClase El nombre de la clase en PascalCase.
+   * @param bool $plural Si debe convertirlo a plural (aunque esto se aplicará a todas las palabras).
+   * @return string El nombre en formato snake_case.
+   */
+  public static function convertirNombreClaseATabla($nombreClase, $plural = false) {
+    // Convertir PascalCase a snake_case
+    $nombreTabla = strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $nombreClase));
 
-    // Convertir la entidad a plural si es necesario
+    // Convertir a plural si se solicita
     if ($plural) {
-      // Usamos una simple regla de pluralización (si el nombre termina en 's', no lo cambiamos)
-      if (substr($nombreEntidad, -1) === 's') {
-        $nombreTabla = $nombreEntidad; // Ya está en plural
-      } else {
-        $nombreTabla = $nombreEntidad . 's'; // Agregar 's' al final
-      }
-    } else {
-      $nombreTabla = $nombreEntidad; // Devolver el nombre en singular
+      $nombreTabla = self::pluralizar($nombreTabla);
     }
 
     return $nombreTabla;
+  }
+
+  /**
+   * Pluraliza un nombre en singular (se aplica a cada palabra separada por '_').
+   * 
+   * @param string $palabra El nombre en singular.
+   * @return string El nombre plural.
+   */
+  public static function pluralizar($palabra) {
+    // Convertir cada palabra en el nombre a plural
+    $palabras = explode('_', $palabra);
+    $palabras = array_map(function ($palabra) {
+      return self::hacerPlural($palabra);
+    }, $palabras);
+
+    return implode('_', $palabras);
+  }
+
+  /**
+   * Convierte una palabra en singular a plural en español.
+   * 
+   * @param string $palabra La palabra en singular.
+   * @return string La palabra en plural.
+   */
+  public static function hacerPlural($palabra) {
+    // Si termina en 'z', se convierte a 'ces' (para algunos sustantivos)
+    if (preg_match('/[zZ]$/', $palabra)) {
+      return $palabra . 'es';
+    }
+
+    // Si termina en 's', no es necesario pluralizar
+    if (preg_match('/[sS]$/', $palabra)) {
+      return $palabra;
+    }
+
+    // Si termina en vocal, agregamos 's'
+    if (preg_match('/[aeiouáéíóúAEIOUÁÉÍÓÚ]$/', $palabra)) {
+      return $palabra . 's';
+    }
+
+    // Si termina en consonante, agregamos 'es'
+    return $palabra . 'es';
   }
 
   /**
@@ -38,10 +97,10 @@ class Utilidades {
    * @return string El nombre en formato PascalCase.
    */
   public static function convertirNombreTablaAClase($nombreTabla, $singular = false) {
-    // Separar por guiones bajos y capitalizar cada palabra
+    // Separar por guiones bajos
     $palabras = explode('_', $nombreTabla);
 
-    // Singularizar todas las palabras antes de capitalizarlas
+    // Singularizar todas las palabras antes de capitalizarlas si se solicita
     if ($singular) {
       $palabras = array_map(function ($palabra) {
         return self::singularizar($palabra); // Singulariza cada palabra
@@ -49,8 +108,7 @@ class Utilidades {
     }
 
     // Capitalizar la primera letra de cada palabra y unirlas en PascalCase
-    $palabras = array_map('ucfirst', $palabras);
-    $nombreClase = implode('', $palabras);
+    $nombreClase = implode('', array_map('ucfirst', $palabras));
 
     return $nombreClase;
   }
@@ -62,7 +120,7 @@ class Utilidades {
    * @return string El nombre en singular.
    */
   public static function singularizar($palabra) {
-    // Regla para "s" al final
+    // Reglas para pluralización
     if (preg_match('/[sS]$/', $palabra)) {
       // Si termina en "es", eliminamos "es"
       if (preg_match('/[eE]s$/', $palabra)) {
@@ -72,7 +130,7 @@ class Utilidades {
       return rtrim($palabra, 's');
     }
 
-    // Reglas para "ces"
+    // Reglas para sustantivos terminados en "ces"
     if (preg_match('/[cC]es$/', $palabra)) {
       return rtrim($palabra, 'ces') . 'z';
     }
@@ -91,7 +149,11 @@ class Utilidades {
     return $palabra;
   }
 
-  // Función para generar el indicador completo (más de 14 caracteres si se desea)
+  /**
+   * Genera un indicador de versión con fecha y microsegundos (20 caracteres).
+   * 
+   * @return string El indicador de versión.
+   */
   public static function generarIndicadorVersion() {
     $microtime = microtime(true); // Tiempo actual en segundos con microsegundos
     $fecha = date("YmdHis", (int) $microtime); // Fecha y hora estándar de 14 caracteres
@@ -102,7 +164,11 @@ class Utilidades {
     return $fecha . $sufijoUnico; // Generar versión completa (20 caracteres)
   }
 
-  // Función para generar el indicador de 14 caracteres (para Phinx)
+  /**
+   * Genera un indicador de versión de 14 caracteres (para Phinx).
+   * 
+   * @return string El indicador de versión de 14 caracteres.
+   */
   public static function generarIndicadorVersionPHINX() {
     $microtime = microtime(true); // Tiempo actual en segundos con microsegundos
     $fecha = date("YmdHi", (int) $microtime); // Fecha y hora estándar de 14 caracteres
@@ -111,6 +177,45 @@ class Utilidades {
     $sufijoUnico = str_pad($microsegundos % 100, 2, "0", STR_PAD_LEFT); // Usamos 4 dígitos para limitar a 14 caracteres
 
     return $fecha . $sufijoUnico; // Generar versión de exactamente 14 caracteres
+  }
+
+  /**
+   * Genera un nombre de usuario a partir de un nombre completo.
+   * 
+   * @param string $nombreCompleto El nombre completo del usuario.
+   * @return string El nombre de usuario generado.
+   */
+  public static function generarNombreUsuario($nombreCompleto) {
+    // Eliminar acentos y caracteres especiales
+    $nombreCompleto = self::normalizar_string($nombreCompleto);
+
+    // Convertir a minúsculas
+    $nombreCompleto = strtolower($nombreCompleto);
+
+    // Reemplazar espacios con guiones bajos
+    $nombreUsuario = str_replace(' ', '_', $nombreCompleto);
+
+    // Limitar la longitud del nombre de usuario (opcional)
+    $nombreUsuario = substr($nombreUsuario, 0, 21); // Limitar a 21 caracteres
+
+    return $nombreUsuario;
+  }
+
+  /**
+   * Normaliza un string, eliminando los acentos y caracteres especiales.
+   * 
+   * @param string $string El string a normalizar.
+   * @return string El string normalizado.
+   */
+  public static function normalizar_string($string) {
+    // Reemplazar caracteres especiales y acentos por equivalentes sin acentos
+    $string = preg_replace(
+        ['/á/', '/é/', '/í/', '/ó/', '/ú/', '/ñ/', '/Á/', '/É/', '/Í/', '/Ó/', '/Ú/', '/Ñ/'],
+        ['a', 'e', 'i', 'o', 'u', 'n', 'A', 'E', 'I', 'O', 'U', 'N'],
+        $string
+    );
+
+    return $string;
   }
 
 }

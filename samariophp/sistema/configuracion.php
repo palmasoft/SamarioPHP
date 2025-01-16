@@ -2,6 +2,7 @@
 return [
     'sistema' => [
         'mantenimiento' => false, // Cambiar a false para deshabilitar 
+        'entorno' => 'desarrollo', // 'desarrollo' o 'produccion'
     ],
     'base_de_datos' => [
         'tipo' => 'mysql',
@@ -18,14 +19,17 @@ return [
         'alias' => 'SamarioPHP',
         'version' => '24.01', // año paquete  
         'dominio' => 'cogeunnumero.com',
-        'url_base' => 'https://app.cogeunnumero.com/',
+        'url_base' => 'https://app.cogeunnumero.com',
         'logo' => '/imagenes/samarioPHP.png',
-        'entorno' => 'desarrollo', // 'desarrollo' o 'produccion'
+        'correo_contacto' => 'contacto@cogeunnumero.com',
+        'correo_soporte' => 'soporte@cogeunnumero.com',
     ],
     "enviador_correos" => [
         'email_respondera' => 'no-reply@cogeunnumero.com',
-        'email_from' => 'app@cogeunnumero.com',
-        'email_method' => 'smtp',
+        'email_enviadopor' => 'app@cogeunnumero.com',
+        'email_charset' => 'UTF-8',
+        'email_codificacion' => 'base64',
+        'email_metodo' => 'smtp',
         'smtp' => [
             'host' => 'vps-1148456.puroingeniosamario.com',
             'auth' => true,

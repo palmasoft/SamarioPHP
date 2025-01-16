@@ -19,13 +19,13 @@ class Usuario extends Modelo {
   }
 
   // Método para crear un nuevo usuario
-  public function guardar() {
+  public function nuevo() {
     // Si es un usuario nuevo, se asignan valores predeterminados como el token de verificación
     if (!$this->id) {
       $this->token_verificacion = bin2hex(random_bytes(16));  // Token de verificación único
       $this->correo_verificado = 0;
     }
-    parent::guardar();  // Llamar al método guardar del modelo base    
+    $this->guardar();  // Llamar al método guardar del modelo base    
   }
 
   // Método para verificar el correo (cambiar estado de correo_verificado)
@@ -35,7 +35,6 @@ class Usuario extends Modelo {
     $this->guardar();
   }
 
-  //
   // 
   //  
   //   
@@ -47,7 +46,7 @@ class Usuario extends Modelo {
   }
 
   public function perfil() {
-    return $this->tieneUn('Perfil', 'usuario_id');
+    return $this->tieneUn(Perfil::class);
   }
 
   public function roles() {

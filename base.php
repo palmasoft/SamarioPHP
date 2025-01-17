@@ -26,7 +26,7 @@ define('RUTA_CONFIG_LOGS', DIR_CONFIGURACIONES . 'logs.php');
 define('RUTA_CONFIG_PHINX', DIR_CONFIGURACIONES . 'phinx.php');
 define('RUTA_CONFIG_TWIG', DIR_CONFIGURACIONES . 'twig.php');
 define('RUTA_CONFIG_SLIM', DIR_CONFIGURACIONES . 'slim.php');
-define('RUTA_CONFIG_MEEDO', DIR_CONFIGURACIONES . 'meedo.php');
+define('RUTA_CONFIG_MEEDO', DIR_CONFIGURACIONES . 'medoo.php');
 
 //MIDDLEWARE
 define('RUTA_MANTENIMIENTO', DIR_APP_SYS . 'middleware/mantenimiento.php');
@@ -58,18 +58,21 @@ define('VISTA_INSTALACION', 'instalacion/preparacion'.VISTA_EXTENSION);
 define('VISTA_INSTALACION_TERMINADA', 'instalacion/completada'.VISTA_EXTENSION);
 //
 //
-define('RUTA_ADMIN', '/panel-principal');   // Ruta para la página de inicio
-define('VISTA_ADMIN', 'admin/panel/principal');
-//   
 // gestion de autenticacion
-define('RUTA_USUARIO_LOGIN', '/login');
-define('RUTA_USUARIO_ENTRAR', '/inicio-sesion');
-define('RUTA_USUARIO_LOGOUT', '/logout');
-define('RUTA_USUARIO_SALIR', '/cerrar-sesion');
 define('RUTA_USUARIO_REGISTRO', '/registro');
+define('VISTA_USUARIO_REGISTRO', 'autenticacion/registro');
 define('RUTA_USUARIO_RECUPERAR_CLAVE', '/recuperar-clave');
 define('RUTA_USUARIO_VERIFICACION', '/verificar-correo');
+//
+define('RUTA_USUARIO_ENTRAR', '/inicio-sesion');
+define('VISTA_USUARIO_ENTRAR', 'autenticacion/login');
+//
+define('RUTA_ADMIN', '/panel-principal');   // Ruta para la página de inicio
+define('VISTA_ADMIN', 'admin/panel/principal');
 define('RUTA_USUARIO_INICIO', '/panel-principal');
+define('VISTA_USUARIO_INICIO', 'admin/panel/principal');
+
+define('RUTA_USUARIO_SALIR', '/cerrar-sesion');
 
 define('RUTA_USUARIOS', '/usuarios');  // Ruta para los usuarios
 define('RUTA_HELLO', '/hello/{name}'); // Ruta para el saludo

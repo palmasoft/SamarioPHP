@@ -39,15 +39,15 @@ $GLOBALS['aplicacion'] = $aplicacion = $slimConfig($configuracion, $plantillas, 
 ///
 //
 //
-
-
-use SamarioPHP\Aplicacion\Servicios\Autenticacion;
 // Crear los servicios necesarios
-$GLOBALS['autenticacion'] = $autenticacionServicio = new Autenticacion();  // Servicio de autenticación
-
+// Servicio de sesion
+use SamarioPHP\Aplicacion\Servicios\Sesion;
+$GLOBALS['sesion'] = $sesionServicio = new Sesion();  
+// Servicio de autenticación
+use SamarioPHP\Aplicacion\Servicios\Autenticacion;
+$GLOBALS['autenticacion'] = $autenticacionServicio = new Autenticacion();  
+// Servicio de correos
 use SamarioPHP\Aplicacion\Servicios\CorreoElectronico;
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
 $GLOBALS['enviador_correos'] = $correoElectronicoServicio = new CorreoElectronico($configuracion);  // Servicio de envío de correos electrónicos
 //
 //

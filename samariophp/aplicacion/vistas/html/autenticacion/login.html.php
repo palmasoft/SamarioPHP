@@ -16,6 +16,7 @@
         <!-- Título e inicio de sesión -->
         <div class="form-container">
             <h2>Iniciar sesión</h2>
+            {{ alerta_error(error) }}
             <form action="/inicio-sesion" method="POST" class="login-form">
                 <div class="form-group">
                     <label for="correo">Correo electrónico</label>

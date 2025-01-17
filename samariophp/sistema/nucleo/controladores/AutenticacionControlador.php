@@ -21,14 +21,14 @@ class AutenticacionControlador extends Controlador {
    * Procesa el registro de un usuario
    */
   public function procesarRegistro() {
-    if ($this->tieneDatos(['nombre', 'correo', 'contrasena', 'recontrasena'])) {
+    if ($this->faltanDatos(['nombre', 'correo', 'contrasena', 'recontrasena'])) {
       $datos = array_merge($this->datos, ['error' => "Todos los campos son requeridos"]);
-      return $this->renderizar('autenticacion/registro', $datos);
+      return $this->renderizar(VISTA_USUARIO_REGISTRO, $datos);
     }
 
     $resultado = $this->registrarUsuario($this->correo, $this->contrasena, $this->recontrasena, $this->datos);
     if ($resultado['error']) {
-      return $this->renderizar('autenticacion/registro', ['error' => $resultado['message']]);
+      return $this->renderizar(VISTA_USUARIO_REGISTRO, ['error' => $resultado['message']]);
     }
     // Mostrar mensaje de espera de verificación
     return $this->mostrarVistaRegistroCompletado($this->correo);
@@ -44,13 +44,16 @@ class AutenticacionControlador extends Controlador {
         throw new \Exception("Las contraseñas no coinciden.");
       }
 
-      $Usuario = $this->sesion->registrar($correo, $contrasena, $params['nombre'] ?? null);
-      $enviado = $this->enviarCorreoVerificacion($Usuario);
-
-      if ($enviado) {
-        return ['error' => false, 'message' => 'Usuario registrado y correo enviado'];
+      $Usuario = $this->autenticacion->registrar($correo, $contrasena, $params['nombre'] ?? null);
+      if ($Usuario) {
+        $enviado = $this->enviarCorreoVerificacion($Usuario);
+        if ($enviado) {
+          return ['error' => false, 'message' => 'Usuario registrado y correo enviado'];
+        } else {
+          return ['error' => false, 'message' => 'Usuario registrado y pero no fue enviado el correo de verificacion'];
+        }
       } else {
-        return ['error' => false, 'message' => 'Usuario registrado y pero no fue enviado el correo de verificacion'];
+        return ['error' => false, 'message' => 'Usuario NO registrado'];
       }
     } catch (\Exception $e) {
       return ['error' => true, 'message' => $e->getMessage()];
@@ -125,20 +128,17 @@ class AutenticacionControlador extends Controlador {
 
   public function actualizarVerficacionCorreo($token) {
     try {
-      // Validar que se haya proporcionado un token
-      if (empty((string) $token)) {
+      if (empty($token)) {
         throw new \Exception('Token no proporcionado.');
       }
 
-      // Intentar verificar el correo con el token
-      $Usuario = $this->sesion->verificarCorreo($token);
+      $Usuario = $this->autenticacion->verificarCorreo($token);
       if ($Usuario) {
         $this->enviarCorreoBienvenida($Usuario);
         return ['error' => false, 'correo_verificado' => false, 'message' => 'Correo del Usuario verificado.', 'Usuario' => $Usuario];
       }
 
-      $this->enviarCorreoErrorVerificacion($Usuario);
-      return ['error' => true, 'message' => 'No se pudo verificar el correo.', 'Usuario' => $Usuario];
+      return ['error' => true, 'message' => 'No se pudo verificar el correo.'];
     } catch (\Exception $e) {
       return ['error' => true, 'message' => $e->getMessage()];
     }
@@ -161,8 +161,6 @@ class AutenticacionControlador extends Controlador {
     return $Correo->enviar();
   }
 
-  // 
-  //  
   /**
    * Envía un correo notificando un fallo en la verificación del correo
    */
@@ -207,18 +205,27 @@ class AutenticacionControlador extends Controlador {
    * Procesa el inicio de sesión
    */
   public function procesarLogin() {
-    $correo = $this->obtenerParametro('correo');
-    $contrasena = $this->obtenerParametro('contrasena');
-    $resultado = $this->autenticacion->iniciarSesion($correo, $contrasena);
-
-    if ($resultado['error']) {
-      return $this->renderizar('autenticacion/login', ['error' => $resultado['message']]);
+    if ($this->faltanDatos(['correo', 'contrasena'])) {
+      $datos = array_merge($this->datos, ['error' => "Todos los campos son requeridos."]);
+      return $this->renderizar(VISTA_USUARIO_ENTRAR, $datos);
     }
-
-    $_SESSION['usuario'] = $resultado['hash'];
-    return $this->redirigir(RUTA_USUARIOS_INICIO);
+    // Validar la contraseña
+    $resultado = $this->autenticacion->validarCredenciales($this->correo, $this->contrasena);
+    if ($resultado['error']) {
+      return $this->renderizar(VISTA_USUARIO_ENTRAR, ['error' => $resultado['message']]);
+    }
+    $this->sesion->iniciar($resultado['Usuario']);
+    return $this->redirigir(RUTA_USUARIO_INICIO);
   }
 
+
+  //
+  //
+  //
+  //
+  //
+  //
+  //  
   /**
    * Muestra el formulario de recuperación de contraseña
    */
@@ -260,9 +267,7 @@ class AutenticacionControlador extends Controlador {
    * Cierra la sesión del usuario
    */
   public function cerrarSesion() {
-    session_start();
-    session_unset();
-    session_destroy();
+    $this->sesion->cerrar();
     return $this->redirigir(RUTA_USUARIO_ENTRAR);
   }
 

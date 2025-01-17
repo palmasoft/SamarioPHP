@@ -316,6 +316,7 @@ footer a:hover {
 .mensaje-error h1 {
     color: #d9534f;
 }
+
 .mensaje {
     padding: var(--espaciado-mensajes);
     margin-top: 20px;
@@ -332,6 +333,29 @@ footer a:hover {
     background-color: #eafaf1;
     color: var(--color-exito);
 }
+
+
+
+/* Estilo general para las alertas */
+.alerta {
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 5px;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+}
+
+/* Estilo específico para las alertas de error */
+.alerta-error {
+    background-color: #f8d7da; /* Color de fondo (rojo claro) */
+    color: #721c24; /* Color del texto (rojo oscuro) */
+    border: 1px solid #f5c6cb; /* Borde rojo claro */
+}
+
+.alerta-error strong {
+    font-weight: bold;
+}
+
 
 /* Estilos adicionales para el menú público */
 .public-menu {

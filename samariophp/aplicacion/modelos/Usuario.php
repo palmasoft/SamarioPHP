@@ -5,17 +5,17 @@ class Usuario extends Modelo {
 
   // Método para obtener un usuario por correo (único)
   public static function porCorreo($correo) {
-    return self::donde('correo', '=', $correo)[0] ?? null;
+    return self::para('correo', $correo) ?? null;
   }
 
   // Método para obtener un usuario por token de verificación
-  public static function porTokenVerificacion($token) {
-    return self::buscarPorEstatico('token_verificacion', $token) ?? null;
+  public static function porTokenVerificacion($token): Usuario {
+    return self::para('token_verificacion', $token) ?? null;
   }
 
   // Método para obtener un usuario por token de recuperación de contraseña
   public static function porTokenRecuperacion($token) {
-    return self::donde('token_recuperacion', '=', $token)[0] ?? null;
+    return self::para('token_recuperacion', $token) ?? null;
   }
 
   // Método para crear un nuevo usuario
@@ -25,11 +25,12 @@ class Usuario extends Modelo {
       $this->token_verificacion = bin2hex(random_bytes(16));  // Token de verificación único
       $this->correo_verificado = 0;
     }
-    $this->guardar();  // Llamar al método guardar del modelo base    
+    $this->guardar();
   }
 
   // Método para verificar el correo (cambiar estado de correo_verificado)
   public function verificarCorreo() {
+    $this->estado = 'activo';
     $this->correo_verificado = 1;
     $this->token_verificacion = null;
     $this->guardar();

@@ -17,7 +17,7 @@ return function ($aplicacion, $logger) {
 
   // Ruta para la página web publica - el HOME
   $aplicacion->get(RUTA_INICIO, [WebControlador::class, 'mostrarInicio']);
-  
+
   // Grupo de rutas para autenticación
 //  $aplicacion->group(RUTA_USUARIO, function (RouteCollectorProxy $grupo) {
   // Registro
@@ -33,7 +33,7 @@ return function ($aplicacion, $logger) {
   // Inicio y cierre de sesión
   $aplicacion->get(RUTA_USUARIO_ENTRAR, [AutenticacionControlador::class, 'mostrarFormularioLogin']);
   $aplicacion->post(RUTA_USUARIO_ENTRAR, [AutenticacionControlador::class, 'procesarLogin']);
-  $aplicacion->post(RUTA_USUARIO_SALIR, [AutenticacionControlador::class, 'cerrarSesion']);
+  $aplicacion->map(['GET', 'POST', 'PATCH'], RUTA_USUARIO_SALIR, [AutenticacionControlador::class, 'cerrarSesion']);
   $aplicacion->get(RUTA_USUARIO_INICIO, [WebControlador::class, 'mostrarPanelAdministracion']);
 //  });
 

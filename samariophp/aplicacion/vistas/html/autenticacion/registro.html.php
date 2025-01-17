@@ -18,11 +18,7 @@
             <div class="form-container">
 
                 <h2>Registro de Usuario</h2>
-                {% if (error) %}
-                <div class="alerta-error">
-                    {{ error }}
-                </div>
-                {% endif %}
+                {{ alerta_error( error) }}
                 <form method="POST" class="formulario-registro">
                     <div class="division" >
                         <div class="campo">

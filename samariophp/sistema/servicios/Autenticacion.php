@@ -21,71 +21,62 @@ class Autenticacion {
     $Usuario->nombre = \Utilidades::generarNombreUsuario($nombre);
     $Usuario->nuevo();
 
-    $Usuario->Perfil = new Perfil();
-    $Usuario->Perfil->nombre_completo = $nombre;
-    $Usuario->Perfil->guardar();
+    $Perfil = new Perfil();
+    $Perfil->nombre_completo = $nombre;
+    $Perfil->usuario_id = $Usuario->id;
+    $Perfil->guardar();
+
+    $Usuario->Perfil = $Perfil;
 
     return $Usuario;
   }
 
   public function verificarCorreo($token) {
-    $usuario = Usuario::porTokenVerificacion($token) ?? null;
-    if (!$usuario) {
+    $Usuario = (new Usuario())::porTokenVerificacion($token) ?? null;
+    if (!$Usuario) {
       throw new \Exception("Token no válido.");
     }
-
-    if ($usuario->correo_verificado) {
+    if ($Usuario->correo_verificado) {
       throw new \Exception('El correo ya estaba verificado.');
     }
-
     // Usar el modelo Usuario para actualizar
-    $usuario->verificarCorreo();
-    $usuario->guardar();
-    return $usuario;
+    $Usuario->verificarCorreo();
+    $Usuario->guardar();
+    return $Usuario;
   }
 
   //
   //
   //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
 
-
-  public function iniciarSesion($correo, $contrasena) {
+  public function validarCredenciales($correo, $contrasena) {
     // Usar el modelo Usuario para buscar al usuario
-    $usuario = Usuario::donde('correo', '=', $correo)[0] ?? null;
-
-    if (!$usuario) {
-      throw new \Exception("Usuario no encontrado.");
+    $Usuario = ( new Usuario() )::para('correo', $correo) ?? null;
+    if (!$Usuario) {
+      return ['error' => true, 'message' => "Correo no encontrado."];
     }
 
-    if (!password_verify($contrasena, $usuario['contrasena'])) {
-      throw new \Exception("Contraseña incorrecta.");
+    if (!password_verify($contrasena, $Usuario->contrasena)) {
+      return ['error' => true, 'message' => "Contraseña incorrecta."];
     }
 
-    // Iniciar sesión (manejo de sesión aquí)
-    session_start();
-    $_SESSION['usuario_id'] = $usuario['id'];
-
-    return true;
+    // Verificar el estado del usuario
+    if ($Usuario->estado !== 'activo') {
+      $msj = $this->obtenerMensajePorEstado($Usuario->estado);
+      $mensaje = $msj ?? 'Tu cuenta no está activa.';
+      return ['error' => true, 'message' => $mensaje];
+    }
+    return ['error' => false, 'Usuario' => $Usuario];
   }
 
-  public function cerrarSesion() {
-    session_start();
-    session_unset();
-    session_destroy();
-    return true;
+  private function obtenerMensajePorEstado($estado) {
+    $mensajes = [
+        'inactivo' => 'Tu cuenta está inactiva. Por favor, verifica tu correo.',
+        'suspendido' => 'Tu cuenta ha sido suspendida. Contacta al soporte.',
+        'eliminado' => 'Tu cuenta fue eliminada. No puedes iniciar sesión.'
+    ];
+
+    return $mensajes[$estado] ?? 'Estado desconocido. Contacta al soporte.';
   }
 
   //
@@ -96,32 +87,32 @@ class Autenticacion {
   //
   //
   public function recuperarContrasena($correo) {
-    $usuario = Usuario::donde('correo', '=', $correo)[0] ?? null;
+    $Usuario = Usuario::donde('correo', '=', $correo)[0] ?? null;
 
-    if (!$usuario) {
+    if (!$Usuario) {
       throw new \Exception("Correo no encontrado.");
     }
 
     $token = bin2hex(random_bytes(32));
-    $usuario->rellenar(['token_recuperacion' => $token]);
-    $usuario->guardar();
+    $Usuario->rellenar(['token_recuperacion' => $token]);
+    $Usuario->guardar();
 
     // Aquí puedes enviar un correo con el token
     return $token;
   }
 
   public function restablecerContrasena($token, $nuevaContrasena) {
-    $usuario = Usuario::donde('token_recuperacion', '=', $token)[0] ?? null;
+    $Usuario = Usuario::donde('token_recuperacion', '=', $token)[0] ?? null;
 
-    if (!$usuario) {
+    if (!$Usuario) {
       throw new \Exception("Token no válido.");
     }
 
-    $usuario->rellenar([
+    $Usuario->rellenar([
         'contrasena' => password_hash($nuevaContrasena, PASSWORD_BCRYPT),
         'token_recuperacion' => null,
     ]);
-    $usuario->guardar();
+    $Usuario->guardar();
 
     return true;
   }

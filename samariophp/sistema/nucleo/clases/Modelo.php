@@ -11,6 +11,7 @@ class Modelo {
   public function __construct($id = null) {
     $this->conexion = $GLOBALS['datos']->conexion;
     $this->tabla = \Utilidades::convertirNombreClaseATabla(strtolower((new \ReflectionClass($this))->getShortName()), true);  // Tabla en plural
+    $this->conexion->tabla($this->tabla);
     $this->id = ($id ?? $this->id);
     if ($this->id) {
       $this->datos();
@@ -44,7 +45,7 @@ class Modelo {
     } else {
       $this->datos['creado_por'] = $usuarioId;
       $this->conexion->insert($this->tabla, $this->datos);
-      $this->id = $this->conexion->id();
+      $this->datos['id'] = $this->id = $this->conexion->id();
     }
   }
 
@@ -83,6 +84,7 @@ class Modelo {
 
     if (is_null($claveForanea)) {
       $claveForanea = strtolower($nombreModeloQUELLAMA) . '_id';
+      echo "***********";
     }
     $OTROModelo->$claveForanea = $this->id;
     // Consultar la base de datos para buscar el registro relacionado
@@ -141,7 +143,7 @@ class Modelo {
     }
 
     // Realizar la consulta a la base de datos
-    $resultado = $this->conexion->get($this->tabla, '*', [$campo . " LIKE " => $valor]);
+    $resultado = $this->conexion->seleccionar('*')->donde([$campo . " LIKE " . $valor]);
 
     // Si no se encuentra el registro, lanzar una excepción
     if (!$resultado) {
@@ -171,12 +173,59 @@ class Modelo {
     return $instancia->conexion->select($instancia->tabla, "*");
   }
 
-  public static function donde($campo, $operador, $valor) {
+  public static function para($campo, $valor) {
     $clase = get_called_class();
     $instancia = new $clase();
-    return $instancia->conexion->select($instancia->tabla, "*", [
-            $campo . " " . $operador => $valor
-    ]);
+    $resultado = $instancia->conexion->donde([$campo . " [=] " => $valor])->seleccionar();
+    if ($resultado) {
+      $instancia->rellenar($resultado[0]);
+      return $instancia;
+    }
+    return null;
+  }
+
+  public static function cuando($campo, $operador, $valor) {
+    $clase = get_called_class();
+    $instancia = new $clase();
+    $resultado = $instancia->conexion->donde([$campo . " [" . $operador . "] " => $valor . "******"])->seleccionar();
+    if ($resultado) {
+      return $resultado;
+    }
+    return null;
+  }
+
+  public static function donde($condiciones) {
+    // Obtenemos el nombre de la clase que está llamando a la función
+    $clase = get_called_class();
+
+    // Creamos una nueva instancia de esa clase
+    $instancia = new $clase();
+
+    // Iniciamos una lista de condiciones en el formato adecuado
+    $where = [];
+
+    // Recorrer el array de condiciones
+    foreach ($condiciones as $campo => $valor) {
+      // Aquí asumimos que el valor ya incluye el operador, si es necesario (por ejemplo, '> 10')
+      // Si el valor es un array, podemos asumir que el valor es una condición más compleja, como BETWEEN, IN, etc.
+      if (is_array($valor)) {
+        $operador = $valor[0];
+        $valor = $valor[1];
+        $where[$campo . " [" . $operador . "] "] = $valor;
+      } else {
+        // Si no es un array, solo agregamos el campo y el valor directamente
+        $where[$campo . " = "] = $valor;
+      }
+    }
+    
+    // Ahora, pasamos las condiciones construidas al método 'donde' de la conexión (suponiendo que es algo tipo Medoo)
+    $resultado = $instancia->conexion->donde($where)->seleccionar();
+
+    // Si obtenemos resultados, los devolvemos; si no, devolvemos null
+    if ($resultado) {
+      return $resultado;
+    }
+    return null;
   }
 
   public static function ordenadoPor($campo, $direccion = "ASC") {
@@ -189,7 +238,7 @@ class Modelo {
 
   // Obtener el usuario actual (ajústalo a tu sistema de autenticación)
   private static function obtenerUsuarioActual() {
-    return $GLOBALS['autenticacionServicio']->usuarioID ?? 0;
+    return $GLOBALS['sesionServicio']->usuarioID() ?? 0;
   }
 
 }

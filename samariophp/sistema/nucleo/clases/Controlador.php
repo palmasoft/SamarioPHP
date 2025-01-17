@@ -3,19 +3,23 @@ namespace SamarioPHP\Aplicacion\Controladores;
 
 use Psr\Http\Message\ResponseInterface as HTTPRespuesta;
 use Psr\Http\Message\ServerRequestInterface as HTTPSolicitud;
+use SamarioPHP\Aplicacion\Servicios\CorreoElectronico;
+use SamarioPHP\Aplicacion\Servicios\Autenticacion;
+use SamarioPHP\Aplicacion\Servicios\Sesion;
 
 class Controlador {
 
   // Atributos para almacenar datos globales
   protected $config;
-  protected $BaseDatos;
+  protected $bd;
   protected $logAplicacion;
   protected $logServidor;
   protected $logEventos;
   protected $aplicacion;
   protected $plantillas;
-  protected $sesion;
-  protected $correos;
+  protected Autenticacion $autenticacion;
+  protected Sesion $sesion;
+  protected CorreoElectronico $correos;
   protected $respuesta;
   protected $datos;
 
@@ -23,16 +27,18 @@ class Controlador {
   public function __construct() {
     // Acceder a los datos globales definidos en $GLOBALS
     $this->config = $GLOBALS['configuracion'];
-    $this->BaseDatos = $GLOBALS['datos'];
+    $this->bd = $GLOBALS['datos'];
+    $this->aplicacion = $GLOBALS['aplicacion'];
+    $this->plantillas = $GLOBALS['plantillas'];
+    $this->autenticacion = $GLOBALS['autenticacionServicio'];
+    $this->correos = $GLOBALS['correoElectronicoServicio'];
+    $this->sesion = $GLOBALS['sesionServicio'];
+    // Cargar datos de \GestorHTTP::$datos y convertirlos en propiedades de la clase    
+    $this->cargarDatos(\GestorHTTP::$datos);
+
     $this->logAplicacion = $GLOBALS['loggers']['aplicacion'];
     $this->logServidor = $GLOBALS['loggers']['servidor'];
     $this->logEventos = $GLOBALS['loggers']['eventos'];
-    $this->aplicacion = $GLOBALS['aplicacion'];
-    $this->plantillas = $GLOBALS['plantillas'];
-    $this->sesion = $GLOBALS['autenticacionServicio'];
-    $this->correos = $GLOBALS['correoElectronicoServicio'];
-    // Cargar datos de \GestorHTTP::$datos y convertirlos en propiedades de la clase
-    $this->cargarDatos(\GestorHTTP::$datos);
   }
 
   // Método para cargar los datos y convertirlos en propiedades
@@ -68,14 +74,14 @@ class Controlador {
   }
 
   // Método para verificar si múltiples datos existen
-  public function tieneDatos(array $keys) {
+  public function faltanDatos(array $keys) {
     // Verifica si todos los datos existen usando isset()
     foreach ($keys as $key) {
-      if (!isset($this->$key)) {
-        return false;  // Si alguna propiedad no existe, retorna false
+      if (!isset($this->$key) and !array_key_exists($key, $this->datos)) {
+        return true;  // Si alguna propiedad no existe, retorna false
       }
     }
-    return true;  // Todos los datos existen
+    return false;  // Todos los datos existen
   }
 
   //Metodo para acceder a la configuraciÃ³n global
@@ -103,7 +109,7 @@ class Controlador {
     $this->respuesta = \GestorHTTP::obtenerRespuesta();
     $archivo_vista = $vista . VISTA_EXTENSION;
     if (!file_exists(DIR_VISTAS . $archivo_vista)) {
-      throw new \Exception("La vista '{$archivo_vista}' no existe para la ruta [".DIR_VISTAS."{$archivo_vista}]. ");
+      throw new \Exception("La vista '{$archivo_vista}' no existe para la ruta [" . DIR_VISTAS . "{$archivo_vista}]. ");
     }
     $html = $this->plantillas->render($archivo_vista, $datos);
     $this->respuesta->getBody()->write($html);

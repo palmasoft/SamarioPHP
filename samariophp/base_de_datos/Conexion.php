@@ -1,5 +1,6 @@
 <?php
 namespace SamarioPHP\BaseDeDatos;
+
 use Medoo\Medoo;
 
 class Conexion extends Medoo {
@@ -54,12 +55,7 @@ class Conexion extends Medoo {
 
   // Ejecutar SELECT
   public function seleccionar($columnas = '*') {
-    $opciones = [
-        'WHERE' => $this->condiciones,
-        'ORDER' => $this->orden,
-        'LIMIT' => $this->limite,
-        'GROUP' => $this->grupo,
-    ];
+    $opciones = [];
 
     if (!empty($this->joins)) {
       foreach ($this->joins as [$tabla, $condicion, $tipo]) {
@@ -67,7 +63,25 @@ class Conexion extends Medoo {
       }
     }
 
-    $resultados = $this->select($this->tabla, $columnas, $opciones);
+    if (!empty($this->condiciones)) {
+      $opciones['WHERE'] = $this->condiciones;
+    }
+    if (!empty($this->orden)) {
+      $opciones['ORDER'] = $this->orden;
+    }
+    if (!empty($this->limite)) {
+      $opciones['LIMIT'] = $this->limite;
+    }
+    if (!empty($this->grupo)) {
+      $opciones['GROUP'] = $this->grupo;
+    }
+
+    $resultados = $this->select(
+        $this->tabla,
+        $columnas,
+        $this->condiciones ?? null
+    );
+
     $this->resetConfiguraciones(); // Limpiar configuraciones después de la consulta
     return $resultados;
   }
@@ -105,4 +119,5 @@ class Conexion extends Medoo {
     $this->grupo = [];
     $this->joins = [];
   }
+
 }

@@ -14,6 +14,14 @@ return function ($configuracion) {
   ]);
 // Agregar la variable global 'config' con el valor de $GLOBALS['config']
   $plantillas->addGlobal('app', $configuracion['aplicacion']);
-  
+
+  // Función personalizada para generar alertas
+  $plantillas->addFunction(new \Twig\TwigFunction('alerta_error', function ($mensaje) {
+            if (empty($mensaje)) {
+              return "";
+            }
+            return '<div class="alerta alerta-error"><strong>Error:</strong> ' . htmlspecialchars($mensaje) . '</div>';
+          }, ['is_safe' => ['html']]));
+
   return $plantillas;
 };

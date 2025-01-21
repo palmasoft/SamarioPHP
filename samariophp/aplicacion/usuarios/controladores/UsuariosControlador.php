@@ -24,4 +24,11 @@ class UsuariosControlador extends Controlador {
     $respuesta->getBody()->write('Crear un usuario');
     return $respuesta;
   }
+  
+  
+  public function administrador() {
+    $usuarios = Usuario::todos();
+    $this->renderizar('usuario/index', ['usuarios' => $usuarios]);
+  }
+  
 }

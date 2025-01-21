@@ -36,4 +36,12 @@ class Correo {
     $this->para = [$correo, $nombre];
   }
 
+  public function asunto($asunto) {
+    $this->asunto = $asunto;
+  }
+
+  public function mensaje($mensaje) {
+    $this->mensaje = $mensaje;
+  }
+
 }

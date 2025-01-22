@@ -1,5 +1,5 @@
 <?php
-require_once DIR_SYS . '/vendor/autoload.php';
+require_once DIR_FRAMEWORK . '/vendor/autoload.php';
 /**
  * Autoloader para las clases en la carpeta Ayudas.
  * Registra las clases automáticamente para evitar el uso de "use".
@@ -9,7 +9,16 @@ spl_autoload_register(function ($nombreClase) {
   $rutaClaseRelativa = str_replace('\\', '/', $nombreClase) . '.php';
 
   // Buscar recursivamente dentro del directorio raíz
-  $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DIR_APP_SYS));
+  $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DIR_SYS));
+  foreach ($iterator as $archivo) {
+    if ($archivo->isFile() && $archivo->getFilename() === basename($rutaClaseRelativa)) {
+      include_once $archivo->getPathname();
+      return;
+    }
+  }
+
+  // Buscar recursivamente dentro del directorio raíz
+  $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DIR_APP));
   foreach ($iterator as $archivo) {
     if ($archivo->isFile() && $archivo->getFilename() === basename($rutaClaseRelativa)) {
       include_once $archivo->getPathname();

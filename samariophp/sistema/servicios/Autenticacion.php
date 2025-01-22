@@ -1,16 +1,11 @@
 <?php
 namespace SamarioPHP\Aplicacion\Servicios;
 
-use SamarioPHP\BaseDeDatos\BaseDatos;
-use SamarioPHP\Aplicacion\Modelos\Usuario; // Importa el modelo Usuario
-use SamarioPHP\Aplicacion\Modelos\Perfil;
+use SamarioPHP\Basededatos\BaseDatos;
+use SamarioPHP\Basededatos\Modelos\Usuario; // Importa el modelo Usuario
+use SamarioPHP\Basededatos\Modelos\Perfil;
 
 class Autenticacion {
-
-  // Obtener el ID del usuario logueado
-  public function usuarioID() {
-    return isset($_SESSION['usuario_id']) ? $_SESSION['usuario_id'] : null;
-  }
 
   public function registrar($correo, $contrasena, $nombre = null) {
     // Crear una nueva instancia del modelo Usuario

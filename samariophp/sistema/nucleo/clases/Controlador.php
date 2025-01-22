@@ -17,11 +17,12 @@ class Controlador {
   protected $logEventos;
   protected $aplicacion;
   protected $plantillas;
+  protected $gestorVistas;
+  protected $respuesta;
+  protected $datos;
   protected Autenticacion $autenticacion;
   protected Sesion $sesion;
   protected CorreoElectronico $correos;
-  protected $respuesta;
-  protected $datos;
 
   // Constructor donde se cargan los datos globales 
   public function __construct() {
@@ -33,6 +34,11 @@ class Controlador {
     $this->autenticacion = $GLOBALS['autenticacionServicio'];
     $this->correos = $GLOBALS['correoElectronicoServicio'];
     $this->sesion = $GLOBALS['sesionServicio'];
+
+    // Iniciar el gestor de vistas
+    $this->respuesta = \GestorHTTP::obtenerRespuesta();
+    $this->gestorVistas = new \GestorVistas($this->plantillas, $this->respuesta);
+
     // Cargar datos de \GestorHTTP::$datos y convertirlos en propiedades de la clase    
     $this->cargarDatos(\GestorHTTP::$datos);
 
@@ -105,15 +111,9 @@ class Controlador {
   }
 
   // Renderizar vistas
+
   public function renderizar(string $vista, array $datos = []): HTTPRespuesta {
-    $this->respuesta = \GestorHTTP::obtenerRespuesta();
-    $archivo_vista = $vista . VISTA_EXTENSION;
-    if (!file_exists(DIR_VISTAS . $archivo_vista)) {
-      throw new \Exception("La vista '{$archivo_vista}' no existe para la ruta [" . DIR_VISTAS . "{$archivo_vista}]. ");
-    }
-    $html = $this->plantillas->render($archivo_vista, $datos);
-    $this->respuesta->getBody()->write($html);
-    return $this->respuesta;
+    return $this->gestorVistas->renderizar($vista, $datos);
   }
 
   // Redirigir a una URL

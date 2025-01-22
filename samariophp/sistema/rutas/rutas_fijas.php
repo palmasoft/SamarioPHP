@@ -21,21 +21,23 @@ return function ($aplicacion, $logger) {
   // Grupo de rutas para autenticación
 //  $aplicacion->group(RUTA_USUARIO, function (RouteCollectorProxy $grupo) {
   // Registro
-  $aplicacion->get(RUTA_USUARIO_REGISTRO, [AutenticacionControlador::class, 'mostrarFormularioRegistro']);
+  $aplicacion->get(RUTA_USUARIO_REGISTRO, [WebControlador::class, 'mostrarFormularioRegistro']);
   $aplicacion->post(RUTA_USUARIO_REGISTRO, [AutenticacionControlador::class, 'procesarRegistro']);
 
   // Verificación de correo
   $aplicacion->get(RUTA_USUARIO_VERIFICACION, [AutenticacionControlador::class, 'verificarCorreoElectronico']);
 
   // Recuperación de contraseña
-  $aplicacion->get(RUTA_USUARIO_RECUPERAR_CLAVE, [AutenticacionControlador::class, 'mostrarFormularioRecuperarClave']);
+  $aplicacion->get(RUTA_USUARIO_RECUPERAR_CLAVE, [WebControlador::class, 'mostrarFormularioRecuperarClave']);
 
   // Inicio y cierre de sesión
-  $aplicacion->get(RUTA_USUARIO_ENTRAR, [AutenticacionControlador::class, 'mostrarFormularioLogin']);
+  $aplicacion->get(RUTA_USUARIO_ENTRAR, [WebControlador::class, 'mostrarFormularioLogin']);
   $aplicacion->post(RUTA_USUARIO_ENTRAR, [AutenticacionControlador::class, 'procesarLogin']);
-  $aplicacion->map(['GET', 'POST', 'PATCH'], RUTA_USUARIO_SALIR, [AutenticacionControlador::class, 'cerrarSesion']);
-  $aplicacion->get(RUTA_USUARIO_INICIO, [WebControlador::class, 'mostrarPanelAdministracion']);
+  $aplicacion->get(RUTA_ADMIN, [AutenticacionControlador::class, 'mostrarPanelAdministracion'])
+  //    ->middleware('autenticado'); 
+  ;
 //  });
+  $aplicacion->map(['*'], RUTA_USUARIO_SALIR, [AutenticacionControlador::class, 'cerrarSesion']);
 
   $logger->info('[RUTAS FIJAS] Rutas principales registradas.');
 };

@@ -1,5 +1,5 @@
 <?php
-namespace SamarioPHP\BaseDeDatos;
+namespace SamarioPHP\Basededatos;
 
 class BaseDatos {
 

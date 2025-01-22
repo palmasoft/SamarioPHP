@@ -11,13 +11,6 @@ class AutenticacionControlador extends Controlador {
   private $token;
 
   /**
-   * Muestra el formulario de registro
-   */
-  public function mostrarFormularioRegistro() {
-    return $this->renderizar('autenticacion/registro');
-  }
-
-  /**
    * Procesa el registro de un usuario
    */
   public function procesarRegistro() {
@@ -215,9 +208,8 @@ class AutenticacionControlador extends Controlador {
       return $this->renderizar(VISTA_USUARIO_ENTRAR, ['error' => $resultado['message']]);
     }
     $this->sesion->iniciar($resultado['Usuario']);
-    return $this->redirigir(RUTA_USUARIO_INICIO);
+    return $this->redirigir(RUTA_ADMIN);
   }
-
 
   //
   //
@@ -226,13 +218,6 @@ class AutenticacionControlador extends Controlador {
   //
   //
   //  
-  /**
-   * Muestra el formulario de recuperación de contraseña
-   */
-  public function mostrarFormularioRecuperarClave() {
-    return $this->renderizar('autenticacion/recuperar_contrasena');
-  }
-
   /**
    * Procesa la recuperación de contraseña
    */
@@ -270,5 +255,13 @@ class AutenticacionControlador extends Controlador {
     $this->sesion->cerrar();
     return $this->redirigir(RUTA_USUARIO_ENTRAR);
   }
+
+  public function mostrarPanelAdministracion() {
+    // Suponiendo que $this->logAplicacion y otras dependencias están correctamente configuradas
+    $mensaje = "Mensaje de Bienvenida.";
+    return $this->renderizar(VISTA_ADMIN, ['mensaje' => $mensaje]);
+  }
+
+  // Acción para mostrar la página de inicio
 
 }

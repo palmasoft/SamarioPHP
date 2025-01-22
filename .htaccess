@@ -2,13 +2,12 @@ RewriteEngine On
 RewriteBase /
 
 # Redirigir solicitudes de /imagenes/ a /publico/imagenes/
-RewriteRule ^imagenes/(.*)$ samariophp/aplicacion/vistas/imagenes/$1 [L]
-
+RewriteRule ^imagenes/(.*)$ publico/imagenes/$1 [L]
+RewriteRule ^img/(.*)$ publico/img/$1 [L]
 # Redirigir solicitudes de /css/ a /publico/css/
-RewriteRule ^css/(.*)$ samariophp/aplicacion/vistas/css/$1 [L]
-
+RewriteRule ^css/(.*)$ publico/css/$1 [L]
 # Redirigir solicitudes de /js/ a /publico/js/
-RewriteRule ^css/(.*)$ samariophp/aplicacion/vistas/js/$1 [L]
+RewriteRule ^css/(.*)$ publico/js/$1 [L]
 
 # Redirigir todas las solicitudes al index.php, excepto si el archivo o directorio existe
 RewriteCond %{REQUEST_FILENAME} !-f

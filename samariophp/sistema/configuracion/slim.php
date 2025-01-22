@@ -15,10 +15,12 @@ return function ($configuracion, $plantillas) {
   $aplicacion->addErrorMiddleware(true, true, true)
       ->setErrorHandler(Slim\Exception\HttpNotFoundException::class, function ($peticion, $handler) use ($plantillas) {
         $respuesta = new \Slim\Psr7\Response();
-        $contenido = $plantillas->render(VISTA_404);
+        $contenido = $plantillas->render(VISTA_404, [
+            'codigo_error' => 404,
+            'mensaje_error' => 'La página que buscas no existe.',
+        ]);
         $respuesta->getBody()->write($contenido);
         return $respuesta->withStatus(404);
       });
-
   return $aplicacion;
 };

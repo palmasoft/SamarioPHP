@@ -2,7 +2,7 @@
 // Cargar la configuración
 require_once __DIR__ . '/../base.php';
 //cargar librerias de composer
-require_once RUTA_LIBRERIAS; //
+require_once RUTA_AUTOLOAD; //
 //
 //datos de configuracion global
 $configuracion = require_once RUTA_CONFIGURACION;
@@ -54,61 +54,8 @@ use SamarioPHP\Aplicacion\Servicios\CorreoElectronico;
 $GLOBALS['enviador_correos'] = $correoElectronicoServicio = new CorreoElectronico($configuracion);  // Servicio de envío de correos electrónicos
 //
 //
-function obtenerRuta($uri, $metodo) {
-  $db = new Conexion(); // Clase para la conexión
-  return $db->query(
-          "SELECT * FROM permisos WHERE ruta = :ruta AND metodo = :metodo LIMIT 1",
-          ['ruta' => $uri, 'metodo' => $metodo]
-  );
-}
-
-function obtenerControlador($nombreControlador) {
-  $clase = "\\App\\Controladores\\{$nombreControlador}";
-  if (!class_exists($clase)) {
-    throw new Exception("El controlador {$nombreControlador} no existe.");
-  }
-  return new $clase();
-}
-
-function usuarioTienePermiso($permiso) {
-  // Verificar si el usuario actual tiene el permiso requerido
-  // Este método debe conectarse al sistema de roles/usuarios
-  return true; // Solo como ejemplo
-}
-
 // Middleware para verificar permisos
 //
-$aplicacion->add(function ($request, $handler) {
-  $uri = $request->getUri()->getPath();
-  $metodo = $request->getMethod();
-
-  // Consultar la ruta en la base de datos
-  $ruta = obtenerRuta($uri, $metodo);
-
-  if (!$ruta) {
-    return $handler->handle($request)
-            ->withStatus(404)
-            ->write('Ruta no encontrada');
-  }
-
-  // Validar permisos del usuario
-  if (!usuarioTienePermiso($ruta['permiso'])) {
-    return $handler->handle($request)
-            ->withStatus(403)
-            ->write('Acceso denegado');
-  }
-
-  // Llamar al controlador asociado
-  $controlador = obtenerControlador($ruta['controlador']);
-  $accion = $ruta['accion'];
-
-  if (!method_exists($controlador, $accion)) {
-    throw new Exception("La acción {$accion} no existe en el controlador {$ruta['controlador']}.");
-  }
-
-  // Ejecutar la acción del controlador
-  return $controlador->{$accion}($request, $handler);
-});
 //
 $aplicacion->add(new \SamarioPHP\Middleware\GestorHTTPMiddleware());
 $aplicacion->add(new \SamarioPHP\Middleware\VerificarInstalacionMiddleware($baseDeDatos, $loggers['aplicacion']));

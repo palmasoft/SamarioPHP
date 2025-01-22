@@ -1,21 +1,27 @@
 <?php
 
-namespace SamarioPHP\Ayudas;
-
 class GestorRutas {
 
   private $rutasFijas = [];
   private $db;
 
   public function __construct(PDO $conexion) {
-    // Configuración de rutas fijas
-    $this->rutasFijas = [
-        '/' => ['controlador' => 'InicioController', 'operacion' => 'index'],
-        '/login' => ['controlador' => 'AuthController', 'operacion' => 'iniciarSesion'],
-        '/registro' => ['controlador' => 'AuthController', 'operacion' => 'registrarse'],
-        '/salir' => ['controlador' => 'AuthController', 'operacion' => 'cerrarSesion'],
-    ];
     $this->db = $conexion;
+  }
+
+  function obtenerRuta($uri, $metodo) {
+    return $this->db->query(
+            "SELECT * FROM permisos WHERE ruta = :ruta AND metodo = :metodo LIMIT 1",
+            ['ruta' => $uri, 'metodo' => $metodo]
+    );
+  }
+
+  function obtenerControlador($nombreControlador) {
+    $clase = "\\App\\Controladores\\{$nombreControlador}";
+    if (!class_exists($clase)) {
+      throw new Exception("El controlador {$nombreControlador} no existe.");
+    }
+    return new $clase();
   }
 
   public function resolverRuta($uri) {
@@ -61,4 +67,5 @@ class GestorRutas {
     http_response_code(500);
     echo "Error 500: No se pudo ejecutar la operación.";
   }
+
 }

@@ -8,7 +8,7 @@
 return function ($configuracion) {
 
 // Configurar Twig para las plantillas y vistas
-  $loader = new \Twig\Loader\FilesystemLoader([DIR_VISTAS, DIR_CORREOS]);
+  $loader = new \Twig\Loader\FilesystemLoader([DIR_VISTAS_PUBLICAS, DIR_APP]);
   $plantillas = new \Twig\Environment($loader, [
       'cache' => false, // O la ruta donde quieras guardar el caché
   ]);

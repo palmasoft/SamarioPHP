@@ -524,3 +524,33 @@ footer a:hover {
 .google-btn:hover {
     background-color: #f7f7f7;
 }
+
+
+
+
+
+/*
+errores
+*/
+
+
+
+.error-page {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.error-page h1 {
+    font-size: 3em;
+    color: #e74c3c;
+}
+
+.error-page .error-message {
+    font-size: 1.2em;
+    color: #555;
+}
+
+.error-page a {
+    color: #3498db;
+    text-decoration: none;
+}

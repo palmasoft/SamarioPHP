@@ -9,14 +9,14 @@
     <!-- Fuente Poppins -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <!-- Tus estilos personalizados -->
-    <link rel="stylesheet" href="{{config.app.url_base}}/css/admin.css">
+    <link rel="stylesheet" href="{{app.url_base}}/css/admin.css">
 
 </head>
 <body>
     <!-- Barra superior -->
     <header class="header">
-        <div class="header__logo">
-            <img src="{{config.app.url_base}}/imagenes/samarioPHP.png" alt="Logo" class="header__logo-img">
+        <div class="header__logo"> 
+            <img src="{{app.logo}}" alt="Logo" class="header__logo-img">
             <span>SamarioPHP</span>
         </div>
         <div class="header__user-menu">

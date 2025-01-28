@@ -256,11 +256,6 @@ class AutenticacionControlador extends Controlador {
     return $this->redirigir(RUTA_USUARIO_ENTRAR);
   }
 
-  public function mostrarPanelAdministracion() {
-    // Suponiendo que $this->logAplicacion y otras dependencias están correctamente configuradas
-    $mensaje = "Mensaje de Bienvenida.";
-    return $this->renderizar(VISTA_ADMIN, ['mensaje' => $mensaje]);
-  }
 
   // Acción para mostrar la página de inicio
 

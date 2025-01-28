@@ -69,7 +69,7 @@ define('RUTA_USUARIO_ENTRAR', '/inicio-sesion');
 define('VISTA_USUARIO_ENTRAR', 'web/login');
 //
 define('RUTA_ADMIN', '/panel-principal');
-define('VISTA_ADMIN', 'admin');
+define('VISTA_ADMIN', 'admin.plantilla');
 //
 define('RUTA_USUARIO_SALIR', '/cerrar-sesion');
 //

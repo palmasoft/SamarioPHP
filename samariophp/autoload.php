@@ -19,7 +19,7 @@ spl_autoload_register(function ($nombreClase) {
 
   // Buscar recursivamente dentro del directorio raíz
   $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(DIR_APP));
-  foreach ($iterator as $archivo) {
+  foreach ($iterator as $archivo) {    
     if ($archivo->isFile() && $archivo->getFilename() === basename($rutaClaseRelativa)) {
       include_once $archivo->getPathname();
       return;

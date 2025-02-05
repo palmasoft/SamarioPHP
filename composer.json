@@ -9,7 +9,6 @@
             "SamarioPHP\\Aplicacion\\": "samariophp/aplicacion/",     
             "SamarioPHP\\Basededatos\\": "samariophp/basededatos/",     
             "SamarioPHP\\Basededatos\\Modelos\\": "samariophp/basededatos/modelos/",
-
             "SamarioPHP\\Sistema\\Ayudas\\": "samariophp/sistema/ayudas/",
             "SamarioPHP\\Sistema\\Nucleo\\": "samariophp/sistema/nucleo/",
             "SamarioPHP\\Sistema\\Controladores\\": "samariophp/sistema/nucleo/controladores/",

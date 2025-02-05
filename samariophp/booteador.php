@@ -60,6 +60,15 @@ $GLOBALS['enviador_correos'] = $correoElectronicoServicio = new CorreoElectronic
 $aplicacion->add(new \SamarioPHP\Middleware\GestorHTTPMiddleware());
 $aplicacion->add(new \SamarioPHP\Middleware\VerificarInstalacionMiddleware($baseDeDatos, $loggers['aplicacion']));
 // 
+// 
+// 
+// 
+// 
+// 
+// 
+// 
+// 
+// 
 // Cargar rutas
 $rutas = require_once RUTA_ENRUTADOR;
 $rutas($aplicacion, $configuracion, $baseDeDatos, $plantillas, $loggers);

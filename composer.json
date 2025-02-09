@@ -8,10 +8,8 @@
             "SamarioPHP\\": "samariophp/",            
             "SamarioPHP\\Aplicacion\\": "samariophp/aplicacion/",     
             "SamarioPHP\\Basededatos\\": "samariophp/basededatos/",     
-            "SamarioPHP\\Basededatos\\Modelos\\": "samariophp/basededatos/modelos/",
-            "SamarioPHP\\Sistema\\Ayudas\\": "samariophp/sistema/ayudas/",
+            "SamarioPHP\\Sistema\\": "samariophp/sistema/",
             "SamarioPHP\\Sistema\\Nucleo\\": "samariophp/sistema/nucleo/",
-            "SamarioPHP\\Sistema\\Controladores\\": "samariophp/sistema/nucleo/controladores/",
             "SamarioPHP\\BaseDeDatos\\": "samariophp/base_de_datos/",
             "SamarioPHP\\BaseDeDatos\\Generador\\": "samariophp/base_de_datos/generador/"
         }

@@ -55,7 +55,7 @@ define('VISTA_INICIO', 'web/inicio');
 //
 //
 define('RUTA_INSTALAR', '/instalacion');  // Ruta para la instalación
-define('VISTA_INSTALACION', 'instalacion/preparacion' . VISTA_EXTENSION);
+define('VISTA_INSTALACION', 'instalacion.preparacion' . VISTA_EXTENSION);
 define('VISTA_INSTALACION_TERMINADA', 'instalacion/completada' . VISTA_EXTENSION);
 //
 //

@@ -1,6 +1,4 @@
 <?php
-// Cargar la configuración
-require_once __DIR__ . '/../base.php';
 //cargar librerias de composer
 require_once RUTA_AUTOLOAD; //
 //
@@ -18,9 +16,14 @@ $configurarLogs = require_once RUTA_CONFIG_LOGS;
 $GLOBALS['loggers'] = $loggers = $configurarLogs();
 // 
 //
+die("probando hasta aqui ". uniqid());
 // Manejo de errores
 $gestorErrores = require_once RUTA_CONFIG_ERRORES;
 $GLOBALS['errores'] = $gestorErrores($configuracion, $loggers['servidor']);
+//
+// Configuración de Slim
+$slimConfig = require_once RUTA_CONFIG_SLIM;
+$GLOBALS['aplicacion'] = $aplicacion = $slimConfig($configuracion, $plantillas, $loggers['aplicacion']);
 // 
 // 
 // Configuración de Medoo para la base de datos
@@ -33,26 +36,9 @@ $GLOBALS['datos'] = $baseDeDatos = $gestorDatos($configuracion, $loggers['aplica
 $twigConfig = require_once RUTA_CONFIG_TWIG;
 $GLOBALS['plantillas'] = $plantillas = $twigConfig($configuracion, $loggers['aplicacion']);
 ///
-// Configuración de Slim
-$slimConfig = require_once RUTA_CONFIG_SLIM;
-$GLOBALS['aplicacion'] = $aplicacion = $slimConfig($configuracion, $plantillas, $loggers['aplicacion']);
 ///
-//
-//
-// Crear los servicios necesarios
-// Servicio de sesion
-use SamarioPHP\Aplicacion\Servicios\Sesion;
-
 $GLOBALS['sesion'] = $sesionServicio = new Sesion();
-// Servicio de autenticación
-use SamarioPHP\Aplicacion\Servicios\Autenticacion;
-
 $GLOBALS['autenticacion'] = $autenticacionServicio = new Autenticacion();
-// Servicio de correos
-use SamarioPHP\Aplicacion\Servicios\CorreoElectronico;
-
-$GLOBALS['enviador_correos'] = $correoElectronicoServicio = new CorreoElectronico($configuracion);  // Servicio de envío de correos electrónicos
-//
 //
 // Middleware para verificar permisos
 //
@@ -75,3 +61,6 @@ $rutas($aplicacion, $configuracion, $baseDeDatos, $plantillas, $loggers);
 //
 // Registro de inicio del sistema
 $loggers['aplicacion']->info('El sistema inició correctamente.');
+
+// Iniciar la aplicación 
+$aplicacion->run();

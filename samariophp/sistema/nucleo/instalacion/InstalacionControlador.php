@@ -10,7 +10,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
 class InstalacionControlador extends Controlador {
 
   // Mostrar formulario de instalación
-  public function mostrarInstalacion(Peticion $peticion, Respuesta $respuesta) {
+  public function mostrarInstalacion() {
     try {
       $tablas = \SamarioPHP\BaseDeDatos\BaseDatos::estaVacia();
       if (!empty($tablas)) {
@@ -29,6 +29,35 @@ class InstalacionControlador extends Controlador {
     }
 
     return $respuesta;
+  }
+
+  public function preparacion() {
+    $logger->info('[INSTALACIÓN] Verificando tablas existentes antes de instalar...');
+
+    try {
+      $tablas = $baseDeDatos->query("SHOW TABLES")->fetchAll();
+
+      if (count($tablas) > 0) {
+        $mensaje = 'La base de datos ya contiene tablas. Elimine las tablas existentes si desea realizar una nueva instalación.';
+        $mensaje_tipo = 'error';
+        $logger->warning('[INSTALACIÓN] Tablas existentes detectadas.');
+      } else {
+        $mensaje = 'Bienvenido al instalador de SamarioPHP. Presione \"Iniciar instalación\" para continuar.';
+        $mensaje_tipo = 'iniciar_instalacion';
+      }
+
+      $contenido = $plantillas->render(VISTA_INSTALACION, [
+          'config' => $configuracion,
+          'mensaje' => $mensaje,
+          'mensaje_tipo' => $mensaje_tipo
+      ]);
+
+      $respuesta->getBody()->write($contenido);
+      return $respuesta;
+    } catch (Exception $e) {
+      $logger->error('[INSTALACIÓN] Error al verificar las tablas: ' . $e->getMessage());
+      throw $e;
+    }
   }
 
   // Ejecutar instalación

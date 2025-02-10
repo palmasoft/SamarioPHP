@@ -2,10 +2,11 @@
 define('DIR_FRAMEWORK', __DIR__ . DIRECTORY_SEPARATOR);
 
 // Definir constantes para las rutas
+define('DIR_ALMACEN', DIR_FRAMEWORK . 'almacen/');
+define('DIR_PUBLICO', DIR_FRAMEWORK . 'publico/');
 define('DIR_SPHP', DIR_FRAMEWORK . 'samariophp/');
 define('DIR_APP', DIR_SPHP . 'aplicacion/');
 define('DIR_SYS', DIR_SPHP . 'sistema/');
-define('DIR_ALMACEN', DIR_SPHP . 'almacen/');
 
 //RUTAS DEL FRAMEWORK
 define('RUTA_AUTOLOAD', DIR_SPHP . 'autoload.php');
@@ -24,6 +25,8 @@ define('RUTA_CONFIG_TWIG', DIR_CONFIGURACIONES . 'twig.php');
 define('RUTA_CONFIG_SLIM', DIR_CONFIGURACIONES . 'slim.php');
 define('RUTA_CONFIG_MEEDO', DIR_CONFIGURACIONES . 'medoo.php');
 
+define('RUTA_FUNCIONES', DIR_SYS . 'utilidades/funciones.globales.php');
+
 //MIDDLEWARE
 define('RUTA_MANTENIMIENTO', DIR_SYS . 'middleware/mantenimiento.php');
 
@@ -31,8 +34,8 @@ define('RUTA_MANTENIMIENTO', DIR_SYS . 'middleware/mantenimiento.php');
 define('RUTA_LOGS', DIR_ALMACEN . 'logs/');
 
 //BASES DE DATOS
+define('DIR_MODELOS', DIR_APP . 'modelos/');
 define('DIR_BASE_DATOS', DIR_SPHP . 'basededatos/');
-define('DIR_MODELOS', DIR_BASE_DATOS . 'modelos/');
 define('DIR_ESQUEMAS', DIR_BASE_DATOS . 'esquemas/');
 define('RUTA_ESQUEMA_INICIAL', DIR_ESQUEMAS . 'esquema_inicial.php');
 define('RUTA_ESQUEMA_AUDITORIA', DIR_ESQUEMAS . 'esquema_auditoria.php');
@@ -41,11 +44,12 @@ define('RUTA_GENERAR_MIGRACIONES_MODELOS', DIR_BASE_DATOS . 'generador/Generador
 
 // Definir constantes para las vistas fijas o inicials
 define('VISTA_EXTENSION', '.html.php');
-define('DIR_PUBLICO', DIR_FRAMEWORK . 'publico/');
 define('DIR_VISTAS_PUBLICAS', DIR_PUBLICO . 'html/');
 
 define('DIR_CONTROLADORES', DIR_PUBLICO . 'controladores/');
 define('DIR_CORREOS', DIR_PUBLICO . 'correos/');
+
+
 //
 // Definir rutas generales
 //

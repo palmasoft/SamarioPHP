@@ -3,6 +3,7 @@ return [
     'sistema' => [
         'mantenimiento' => false, // Cambiar a false para deshabilitar 
         'entorno' => 'desarrollo', // 'desarrollo' o 'produccion'
+        'dias_maximo_logs' => 14,
     ],
     'base_de_datos' => [
         'tipo' => 'mysql',
@@ -43,5 +44,6 @@ return [
     "autenticador" => [
     ],
     'archivos' => [
-    ]
+    ],
+    'twig' => require_once RUTA_CONFIG_TWIG,
 ];

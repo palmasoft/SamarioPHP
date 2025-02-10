@@ -4,7 +4,7 @@ namespace SamarioPHP\Sistema\Utilidades;
 
 trait TextoNormalizador
 {
-    public function normalizar_string(string $texto): string
+    public static function normalizar_string(string $texto): string
     {
         $texto = strtolower($texto);
         $texto = preg_replace('/[áàâä]/u', 'a', $texto);

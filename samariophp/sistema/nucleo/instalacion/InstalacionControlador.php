@@ -146,7 +146,7 @@ class InstalacionControlador extends Controlador {
   }
 
   private function logError($mensaje) {
-    \GestorLog::log('aplicacion', 'error', '[INSTALACIÓN] ' . $mensaje);
+    \Log::log('aplicacion', 'error', '[INSTALACIÓN] ' . $mensaje);
   }
 
 }

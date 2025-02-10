@@ -1,5 +1,5 @@
 <?php
-namespace SamarioPHP\Middleware;
+namespace SamarioPHP\Sistema\Middleware;
 
 use Psr\Http\Message\ResponseInterface as HTTPRespuesta;
 use Psr\Http\Message\ServerRequestInterface as HTTPSolicitud;

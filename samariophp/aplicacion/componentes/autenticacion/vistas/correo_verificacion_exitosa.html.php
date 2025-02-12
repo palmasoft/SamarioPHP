@@ -3,7 +3,6 @@
 {% block mensaje %}
 <div class="container">
     <div class="header">
-        <img src="{{ logo_url }}" alt="Logo">
         <h1>¡Bienvenido, {{ nombre_usuario }}!</h1>
     </div>
     <div class="content">

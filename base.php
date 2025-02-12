@@ -43,12 +43,12 @@ define('DIR_MIGRACIONES', DIR_BASE_DATOS . 'migraciones/');
 define('RUTA_GENERAR_MIGRACIONES_MODELOS', DIR_BASE_DATOS . 'generador/GeneradorMigracionesModelos.php');
 
 // Definir constantes para las vistas fijas o inicials
+define('DIR_CONTROLADORES', DIR_PUBLICO . 'controladores/');
 define('VISTA_EXTENSION', '.html.php');
 define('DIR_VISTAS_PUBLICAS', DIR_PUBLICO . 'html/');
-
-define('DIR_CONTROLADORES', DIR_PUBLICO . 'controladores/');
-define('DIR_CORREOS', DIR_PUBLICO . 'correos/');
-
+define('DIR_CORREOS', DIR_VISTAS_PUBLICAS . 'correos/');
+define('DIR_PAGINASWEB', DIR_VISTAS_PUBLICAS . 'web/');
+define('DIR_ERRORES', DIR_VISTAS_PUBLICAS . 'errores/');
 
 //
 // Definir rutas generales

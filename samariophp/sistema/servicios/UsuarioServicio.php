@@ -5,69 +5,59 @@ use SamarioPHP\Basededatos\Modelos\Usuario;
 use SamarioPHP\Basededatos\Modelos\Perfil;
 
 class UsuarioServicio {
-    
-  /**
-   * Genera un nombre de usuario a partir de un nombre completo.
-   * 
-   * @param string $nombreCompleto El nombre completo del usuario.
-   * @return string El nombre de usuario generado.
-   */
-  public function generarNombreUsuario($nombreCompleto) {
-    // Eliminar acentos y caracteres especiales
-    $nombreCompleto = \GestorNombres::normalizar_string($nombreCompleto);
 
-    // Convertir a minúsculas
-    $nombreCompleto = strtolower($nombreCompleto);
+    public function registrar($correo, $contrasena, $nombre = null) {
+        if (Usuario::para('correo', $correo)) {
+            return Respuesta::error("El correo ya está registrado.");
+        }
+        $Usuario = new Usuario();
+        $Usuario->correo = $correo;
+        $Usuario->contrasena = password_hash($contrasena, PASSWORD_BCRYPT);
+        $Usuario->nombre = $this->generarNombreUsuario($nombre);
+        $Usuario->nuevo();
 
-    // Reemplazar espacios con guiones bajos
-    $nombreUsuario = str_replace(' ', '_', $nombreCompleto);
+        $Perfil = new Perfil();
+        $Perfil->nombre_completo = $nombre;
+        $Perfil->usuario_id = $Usuario->id;
+        $Perfil->guardar();
 
-    // Limitar la longitud del nombre de usuario (opcional)
-    $nombreUsuario = substr($nombreUsuario, 0, 21); // Limitar a 21 caracteres
-
-    return $nombreUsuario;
-  }
-
-  public function registrar($correo, $contrasena, $nombre = null) {
-    $Usuario = new Usuario();
-    $Usuario->correo = $correo;
-    $Usuario->contrasena = password_hash($contrasena, PASSWORD_BCRYPT);
-    $Usuario->nombre = \Utilidades::generarNombreUsuario($nombre);
-    $Usuario->nuevo();
-
-    $Perfil = new Perfil();
-    $Perfil->nombre_completo = $nombre;
-    $Perfil->usuario_id = $Usuario->id;
-    $Perfil->guardar();
-
-    $Usuario->Perfil = $Perfil;
-    return $Usuario;
-  }
-
-  public function recuperarContrasena($correo) {
-    $Usuario = Usuario::donde('correo', '=', $correo)[0] ?? null;
-    if (!$Usuario) {
-      throw new \Exception("Correo no encontrado.");
+        $Usuario->Perfil = $Perfil;
+        return Respuesta::exito("Usuario registrado con éxito.", ['usuario' => $Usuario]);
     }
 
-    $token = bin2hex(random_bytes(32));
-    $Usuario->rellenar(['token_recuperacion' => $token]);
-    $Usuario->guardar();
-    // Aquí puedes enviar un correo con el token
-    return $token;
-  }
+    public function recuperarContrasena($correo) {
+        $Usuario = Usuario::para('correo', $correo) ?? null;
+        if (!$Usuario) {
+            return Respuesta::error("Correo no encontrado.");
+        }
 
-  public function restablecerContrasena($token, $nuevaContrasena) {
-    $Usuario = Usuario::donde('token_recuperacion', '=', $token)[0] ?? null;
-    if (!$Usuario) {
-      throw new \Exception("Token no válido.");
+        $token = bin2hex(random_bytes(32));
+        $Usuario->rellenar(['token_recuperacion' => $token]);
+        $Usuario->guardar();
+
+        // Aquí puedes integrar el envío de correo con el token
+        return Respuesta::exito("Se ha enviado un correo para restablecer la contraseña.", ['token' => $token]);
     }
 
-    $Usuario->rellenar([
-      'contrasena' => password_hash($nuevaContrasena, PASSWORD_BCRYPT),
-      'token_recuperacion' => null
-    ]);
-    $Usuario->guardar();
-    return true;
-  }
+    public function restablecerContrasena($token, $nuevaContrasena) {
+        $Usuario = Usuario::para('token_recuperacion', $token) ?? null;
+        if (!$Usuario) {
+            return Respuesta::error("Token no válido.");
+        }
+
+        $Usuario->rellenar([
+            'contrasena' => password_hash($nuevaContrasena, PASSWORD_BCRYPT),
+            'token_recuperacion' => null
+        ]);
+        $Usuario->guardar();
+
+        return Respuesta::exito("Contraseña restablecida con éxito.");
+    }
+
+    private function generarNombreUsuario($nombreCompleto) {
+        $nombreCompleto = \GestorNombres::normalizar_string($nombreCompleto);
+        $nombreUsuario = strtolower(str_replace(' ', '_', $nombreCompleto));
+        return substr($nombreUsuario, 0, 21);
+    }
+
 }

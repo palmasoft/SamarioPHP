@@ -12,6 +12,6 @@ namespace SamarioPHP\Aplicacion\Controladores;
  */
 class SeguridadControlador {
 
-  //put your code here
+    //put your code here
 
 }

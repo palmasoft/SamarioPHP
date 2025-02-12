@@ -1,5 +1,4 @@
 <?php
-
 namespace SamarioPHP\Aplicacion\Modelos;
 
 use SamarioPHP\Basededatos\Modelo;
@@ -43,8 +42,8 @@ class Usuario extends Modelo {
     //  
     //   
     //   Método para restablecer la contraseña del usuario
-    public function restablecerContrasena($nuevaContrasena) {
-        $this->contrasena = password_hash($nuevaContrasena, PASSWORD_BCRYPT);
+    public function restablecerContrasena($nuevaContrasena = null) {
+        $this->contrasena = password_hash($nuevaContrasena ?? $this->nueva_contrasena, PASSWORD_BCRYPT);
         $this->token_recuperacion = null;
         $this->guardar();
     }

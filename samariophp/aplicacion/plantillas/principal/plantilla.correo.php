@@ -110,23 +110,35 @@
             .button:hover {
                 background: #45a049;
             }
-        </style>
-
+        </style>        
+        {% block estilos %}
+        {% endblock %}
+        
     </head>
     <body>
         <div class="container">
 
-            {% block mensaje %}
-            <div></div>
-            {% endblock %}
+            <header>
+                {% block encabezado %}            
+                <img src="{{ logo_url }}" alt="Logo">                            
+                {% endblock %}
+            </header>
 
+            <main>
+                {% block mensaje %}            
+                {% endblock %}
+            </main>
 
-            <div class="footer">
-                <p>&copy; {{ anio }} {{ nombre_proyecto }}. Todos los derechos reservados.</p>
-                <p>¿Necesitas ayuda? <a href="{{ correo_contacto }}">Contáctanos</a></p>
-                <p><a href="{{ url_base }}/terminos">Términos y Condiciones</a> | <a href="{{ url_base }}/privacidad">Política de Privacidad</a></p>
-            </div>
-            
+            <footer>
+                {% block piecera %}
+                <div class="footer">
+                    <p>&copy; {{ anio }} {{ nombre_proyecto }}. Todos los derechos reservados.</p>
+                    <p>¿Necesitas ayuda? <a href="{{ correo_contacto }}">Contáctanos</a></p>
+                    <p><a href="{{ url_base }}/terminos">Términos y Condiciones</a> | <a href="{{ url_base }}/privacidad">Política de Privacidad</a></p>
+                </div>
+                {% endblock %}
+            </footer>
+
         </div>
     </body>
 </html>

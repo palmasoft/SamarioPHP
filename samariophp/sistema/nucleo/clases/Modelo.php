@@ -13,7 +13,7 @@ class Modelo {
 
     public function __construct($id = null) {
         $this->conexion = BaseDatos::obtenerConexion();
-       echo  $this->tabla = GestorNombres::convertirNombreClaseATabla(strtolower((new \ReflectionClass($this))->getShortName()), true);  // Tabla en plural
+        $this->tabla = GestorNombres::convertirNombreClaseATabla(strtolower((new \ReflectionClass($this))->getShortName()), true);  // Tabla en plural
         $this->conexion->tabla($this->tabla);
         $this->id = ($id ?? $this->id);
         if ($this->id) {

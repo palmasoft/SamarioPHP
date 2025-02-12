@@ -2,14 +2,21 @@
 namespace SamarioPHP\Aplicacion\Controladores;
 
 use SamarioPHP\Sistema\Utilidades\Auth;
-use SamarioPHP\Aplicacion\Servicios\CorreoElectronico;
+use SamarioPHP\Sistema\Respuesta;
 use Psr\Http\Message\ResponseInterface as HTTPRespuesta;
 use Psr\Http\Message\ServerRequestInterface as HTTPSolicitud;
-
+use \SamarioPHP\Aplicacion\Correos\BienvenidaCorreo;
 
 class AutenticacionControlador extends Controlador {
 
     private $token;
+
+    /**
+     * Muestra el formulario de registro
+     */
+    public function mostrarVistaRegistro() {
+        return vista(VISTA_USUARIO_REGISTRO);
+    }
 
     /**
      * Procesa el registro de un usuario
@@ -20,9 +27,9 @@ class AutenticacionControlador extends Controlador {
             return vista(VISTA_USUARIO_REGISTRO, $datos);
         }
 
-        $resultado = $this->registrarUsuario($this->correo, $this->contrasena, $this->recontrasena, $this->datos);
-        if ($resultado['error']) {
-            return vista(VISTA_USUARIO_REGISTRO, ['error' => $resultado['message']]);
+        $respuesta = $this->registrarUsuario($this->correo, $this->contrasena, $this->recontrasena, $this->datos);
+        if ($respuesta->tipo === 'error') {
+            return vista(VISTA_USUARIO_REGISTRO, ['error' => $respuesta->mensaje]);
         }
         // Mostrar mensaje de espera de verificación
         return $this->mostrarVistaRegistroCompletado($this->correo);
@@ -33,24 +40,25 @@ class AutenticacionControlador extends Controlador {
      */
     public function registrarUsuario($correo, $contrasena, $rcontrasena, $params = []) {
         try {
-
             if ($contrasena !== $rcontrasena) {
                 throw new \Exception("Las contraseñas no coinciden.");
             }
 
-            $Usuario = $this->autenticacion->registrar($correo, $contrasena, $params['nombre'] ?? null);
-            if ($Usuario) {
-                $enviado = $this->enviarCorreoVerificacion($Usuario);
-                if ($enviado) {
-                    return ['error' => false, 'message' => 'Usuario registrado y correo enviado'];
+            // Se asume que el servicio de autenticación retorna una Respuesta
+            $respuestaRegistro = Auth::registrar($correo, $contrasena, $params['nombre'] ?? null);
+            if ($respuestaRegistro->tipo === 'exito') {
+                $Usuario = $respuestaRegistro->datos['usuario'];
+                $correoEnviado = $this->enviarCorreoVerificacion($Usuario);
+                if ($correoEnviado) {
+                    return Respuesta::exito('Usuario registrado y correo enviado');
                 } else {
-                    return ['error' => false, 'message' => 'Usuario registrado y pero no fue enviado el correo de verificacion'];
+                    return Respuesta::exito('Usuario registrado, pero no se pudo enviar el correo de verificación');
                 }
             } else {
-                return ['error' => false, 'message' => 'Usuario NO registrado'];
+                return Respuesta::error('Usuario no registrado');
             }
         } catch (\Exception $e) {
-            return ['error' => true, 'message' => $e->getMessage()];
+            return Respuesta::error($e->getMessage());
         }
     }
 
@@ -58,19 +66,9 @@ class AutenticacionControlador extends Controlador {
      * Envía un correo de verificación
      */
     public function enviarCorreoVerificacion($Usuario) {
-
-        $enlace = "{$this->config['aplicacion']['url_base']}" . RUTA_USUARIO_VERIFICACION . "?token={$Usuario->token_verificacion}";
-
-        $Correo = new \Correo('autenticacion/correo_verificacion', [
-            'nombre' => $Usuario->nombre,
-            'enlace_verificacion' => $enlace,
-            'nombre_proyecto' => $this->config['aplicacion']['nombre'],
-            'anio' => date('Y'),
-            'correo_contacto' => $this->config['aplicacion']['correo_contacto'],
-        ]);
-        $Correo->asunto = "Verificación de correo [{$Usuario->correo}] - {$this->config['aplicacion']['nombre']}";
-        $Correo->destinatario($Usuario->correo, $Usuario->nombre);
-        return $Correo->enviar();
+        $enlace = "{$this->config['aplicacion']['url_base']}" . RUTA_USUARIO_VERIFICACION
+            . "?token={$Usuario->token_verificacion}";
+        return VerificacionCorreo::enviar([$Usuario->correo, $Usuario->nombre], compact($Usuario, $enlace));
     }
 
     /**
@@ -80,84 +78,53 @@ class AutenticacionControlador extends Controlador {
         return vista('autenticacion/registro_completado', ['correo' => $correo]);
     }
 
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
     /**
-     * Verifica el correo electrónico
+     * Muestra la vista de verificación de correo electrónico
      */
-    /**
-     * Verifica el correo electrónico
-     */
-    public function verificarCorreoElectronico() {
+    public function mostrarVistaVerificacionCorreo() {
         try {
             $this->token = \GestorHTTP::parametro('token');
-            // Validar token y verificar el correo
-            $resultado = $this->actualizarVerficacionCorreo($this->token);
+            $respuestaVerificacion = $this->actualizarVerificacionCorreo($this->token);
 
-            if ($resultado['error']) {
-                // Token no válido o expirado        
-                return vista('autenticacion/verificar_correo_error', ['mensaje' => $resultado['message'] ?? 'No se pudo verificar el correo.']);
+            if ($respuestaVerificacion->tipo === 'error') {
+                return vista('autenticacion/verificar_correo_error', ['mensaje' => $respuestaVerificacion->mensaje]);
             }
-
-            if ($resultado['correo_verificado']) {
+            if (isset($respuestaVerificacion->datos['correo_verificado']) && $respuestaVerificacion->datos['correo_verificado']) {
                 return vista('autenticacion/verificar_correo_error', ['mensaje' => 'El correo ya estaba verificado previamente.']);
             }
-
             return vista('autenticacion/verificar_correo_exito', ['mensaje' => 'Correo verificado exitosamente. ¡Gracias por confirmar tu dirección!']);
         } catch (\Exception $e) {
-            // Manejar errores inesperados
-            return vista('autenticacion/verificar_correo_error', ['mensaje' => $e->getMessage() ?? 'Ocurrió un error al verificar tu correo. Inténtalo más tarde.']);
+            return vista('autenticacion/verificar_correo_error', ['mensaje' => $e->getMessage() ?: 'Ocurrió un error al verificar tu correo. Inténtalo más tarde.']);
         }
     }
 
-    public function actualizarVerficacionCorreo($token) {
+    /**
+     * Actualiza la verificación del correo electrónico usando el token
+     */
+    public function actualizarVerificacionCorreo($token) {
         try {
             if (empty($token)) {
                 throw new \Exception('Token no proporcionado.');
             }
 
-            $Usuario = $this->autenticacion->verificarCorreo($token);
+            $Usuario = Auth::verificarCorreo($token);
             if ($Usuario) {
-                $this->enviarCorreoBienvenida($Usuario);
-                return ['error' => false, 'correo_verificado' => false, 'message' => 'Correo del Usuario verificado.', 'Usuario' => $Usuario];
+                BienvenidaCorreo::enviar([$Usuario->correo, $Usuario->nombre], compact($Usuario));
+                return Respuesta::exito('Correo del Usuario verificado.', [
+                        'correo_verificado' => false,
+                        'Usuario' => $Usuario
+                ]);
             }
-
-            return ['error' => true, 'message' => 'No se pudo verificar el correo.'];
+            return Respuesta::error('No se pudo verificar el correo.');
         } catch (\Exception $e) {
-            return ['error' => true, 'message' => $e->getMessage()];
+            return Respuesta::error($e->getMessage());
         }
-    }
-
-    /**
-     * Envía un correo de bienvenida después de verificar el correo
-     */
-    public function enviarCorreoBienvenida($Usuario) {
-
-        $Correo = new \Correo('bienvenida', [
-            'nombre' => $Usuario->nombre,
-            'nombre_proyecto' => $this->config['aplicacion']['nombre'],
-            'anio' => date('Y'),
-            'url_base' => $this->config['aplicacion']['url_base'],
-            'correo_contacto' => $this->config['aplicacion']['correo_contacto'],
-        ]);
-        $Correo->asunto = "¡Bienvenido a {$this->config['aplicacion']['nombre']}!";
-        $Correo->destinatario($Usuario->correo, $Usuario->nombre);
-        return $Correo->enviar();
     }
 
     /**
      * Envía un correo notificando un fallo en la verificación del correo
      */
     public function enviarCorreoErrorVerificacion($Usuario) {
-
         $Correo = new \Correo('autenticacion/correo_error_verificacion', [
             'nombre' => $Usuario->nombre,
             'nombre_proyecto' => $this->config['aplicacion']['nombre'],
@@ -170,56 +137,45 @@ class AutenticacionControlador extends Controlador {
         return $Correo->enviar();
     }
 
-    //
-    ///
-    ////
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    //
-    ///
+    /**
+     * Muestra el formulario de login
+     */
+    public function mostrarFormularioLogin() {
+        return vista(VISTA_USUARIO_ENTRAR);
+    }
+
     /**
      * Procesa el inicio de sesión
      */
     public function procesarLogin() {
         if ($this->faltanDatos(['correo', 'contrasena'])) {
-            return vista(VISTA_USUARIO_ENTRAR, [$this->datos, ['error' => "Todos los campos son requeridos."]]);
+            return vista(VISTA_USUARIO_ENTRAR, ['error' => "Todos los campos son requeridos."]);
         }
-        // Validar la contraseña
-        $resultado = Auth::validarCredenciales($this->correo, $this->contrasena);
-        if ($resultado['error']) {
-            return vista(VISTA_USUARIO_ENTRAR, ['error' => $resultado['message']]);
+        // Se asume que Auth::validarCredenciales ahora retorna un objeto Respuesta
+        $respuestaLogin = Auth::validarCredenciales($this->correo, $this->contrasena);
+        if ($respuestaLogin->tipo === 'error') {
+            return vista(VISTA_USUARIO_ENTRAR, ['error' => $respuestaLogin->mensaje]);
         }
-        $this->sesion->iniciar($resultado['Usuario']);
-        return redirigir(RUTA_ADMIN);
+        Auth::iniciarSesion($respuestaLogin->datos['usuario']);
+        redirigir(RUTA_ADMIN);
     }
 
-    //
-    //
-    //
-    //
-    //
-    //
-    //  
+    /**
+     * Muestra el formulario de recuperación de contraseña
+     */
+    public function mostrarVistaRecuperarClave() {
+        return vista('autenticacion.recuperar_contrasena');
+    }
+
     /**
      * Procesa la recuperación de contraseña
      */
-    public function procesarRecuperarClave(HTTPSolicitud $peticion) {
-        $correo = $peticion->getParsedBody()['correo'];
-        $resultado = $this->recuperarContrasena($correo);
-
-        if ($resultado['error']) {
-            return vista('autenticacion/recuperar_contrasena', ['error' => $resultado['message']]);
+    public function procesarRecuperarClave() {
+        $respuestaRecuperar = $this->recuperarContrasena($this->correo);
+        if ($respuestaRecuperar->tipo === 'error') {
+            return vista('autenticacion.recuperar_contrasena', compact($respuestaRecuperar));
         }
-
-        return $this->redirigir(RUTA_USUARIO_ENTRAR);
+        redirigir(RUTA_USUARIO_ENTRAR);
     }
 
     /**
@@ -227,14 +183,18 @@ class AutenticacionControlador extends Controlador {
      */
     public function recuperarContrasena($correo) {
         try {
-            $token = $this->autenticacion->recuperarContrasena($correo);
+            $respuestaRecuperacion = Auth::recuperarContrasena($correo);
+            if ($respuestaRecuperacion->tipo === 'error') {
+                return $respuestaRecuperacion;
+            }
+            $token = $respuestaRecuperacion->datos['token'] ?? null;
             $asunto = "Recuperación de contraseña";
-            $cuerpo = "Haz clic en el siguiente enlace para restablecer tu contraseña: <a href='https://tudominio.com/restablecer?token={$token}'>Restablecer contraseña</a>";
+            $cuerpo = "Haz clic en el siguiente enlace para restablecer tu contraseña: "
+                . "<a href='https://tudominio.com/restablecer?token={$token}'>Restablecer contraseña</a>";
             $this->correos->enviarCorreo($correo, $asunto, $cuerpo);
-
-            return ['error' => false, 'message' => 'Correo de recuperación enviado'];
+            return Respuesta::exito('Correo de recuperación enviado');
         } catch (\Exception $e) {
-            return ['error' => true, 'message' => $e->getMessage()];
+            return Respuesta::error($e->getMessage());
         }
     }
 
@@ -242,10 +202,8 @@ class AutenticacionControlador extends Controlador {
      * Cierra la sesión del usuario
      */
     public function cerrarSesion() {
-        $this->sesion->cerrar();
-        return $this->redirigir(RUTA_USUARIO_ENTRAR);
+        Auth::cerrarSesion();
+        redirigir(RUTA_USUARIO_ENTRAR);
     }
-
-    // Acción para mostrar la página de inicio
 
 }

@@ -5,6 +5,12 @@ use SamarioPHP\Basededatos\Modelo;
 
 class Usuario extends Modelo {
 
+    protected $obligatorios = [
+        'nombre',
+        'correo',
+        'contrasena',
+    ];
+
     // Método para obtener un usuario por correo (único)
     public static function porCorreo($correo) {
         return self::para('correo', $correo) ?? null;
@@ -35,16 +41,6 @@ class Usuario extends Modelo {
         $this->estado = 'activo';
         $this->correo_verificado = 1;
         $this->token_verificacion = null;
-        $this->guardar();
-    }
-
-    // 
-    //  
-    //   
-    //   Método para restablecer la contraseña del usuario
-    public function restablecerContrasena($nuevaContrasena = null) {
-        $this->contrasena = password_hash($nuevaContrasena ?? $this->nueva_contrasena, PASSWORD_BCRYPT);
-        $this->token_recuperacion = null;
         $this->guardar();
     }
 

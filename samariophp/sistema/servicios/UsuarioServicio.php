@@ -54,8 +54,8 @@ class UsuarioServicio {
         return Respuesta::exito("Contraseña restablecida con éxito.");
     }
 
-    private function generarNombreUsuario($nombreCompleto) {
-        $nombreCompleto = \GestorNombres::normalizar_string($nombreCompleto);
+    private function generarNombreUsuario($nombreCompleto = null) {
+        $nombreCompleto = \GestorNombres::normalizar_string($nombreCompleto ?? uniqid("nuevo"));
         $nombreUsuario = strtolower(str_replace(' ', '_', $nombreCompleto));
         return substr($nombreUsuario, 0, 21);
     }

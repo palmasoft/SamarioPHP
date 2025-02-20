@@ -2,14 +2,15 @@
 namespace SamarioPHP\Sistema;
 
 use Slim\Factory\AppFactory;
+use SamarioPHP\Sistema\Auth;
 use SamarioPHP\Sistema\Servicios\SesionServicio;
+use SamarioPHP\Sistema\Servicios\UsuarioServicio;
 use SamarioPHP\Sistema\Servicios\AutenticacionServicio;
 use SamarioPHP\Sistema\Middleware\GestorHTTPMiddleware;
 use SamarioPHP\Sistema\VerificarInstalacionMiddleware;
 use SamarioPHP\Sistema\Utilidades\Log;
 use SamarioPHP\Sistema\Utilidades\Vistas;
-use SamarioPHP\Sistema\Utilidades\Auth;
-use SamarioPHP\Basededatos\BaseDatos;
+use SamarioPHP\Sistema\BaseDatos;
 
 class Aplicacion {
 
@@ -45,11 +46,11 @@ class Aplicacion {
 
         // Cargar configuración para Medoo desde una ruta definida
         $configMedoo = require_once RUTA_CONFIG_MEEDO;
-        BaseDatos::iniciar($configMedoo($this->configuracion));        
+        BaseDatos::iniciar($configMedoo($this->configuracion));
         // Inicializar Twig en la clase Vistas
         Vistas::inicializar($this->configuracion);
         // Inicializar la sesión
-        Auth::setServicio(new AutenticacionServicio(new SesionServicio()));
+        Auth::setServicio(new AutenticacionServicio(new UsuarioServicio()));
     }
 
     private function inicializarManejoErrores($configuracionErrores) {
@@ -62,31 +63,67 @@ class Aplicacion {
         $this->app = \Slim\Factory\AppFactory::create();
         $this->app->addRoutingMiddleware();
 
-// Configurar manejo de errores usando los parámetros del archivo de configuración
+        // Configurar manejo de errores usando los parámetros del archivo de configuración
         $errorMiddleware = $this->app->addErrorMiddleware(
             $configuracionSlim['error_middleware']['mostrar_errores'],
             $configuracionSlim['error_middleware']['log_errores'],
             $configuracionSlim['error_middleware']['mostrar_detalles']
         );
 
-// Configurar manejo de errores 404
-        $errorMiddleware->setErrorHandler(\Slim\Exception\HttpNotFoundException::class, function ($peticion, $handler) use ($configuracionSlim) {
-            return $this->renderizarVista404();
-        });
+//        // Configurar manejo de errores 404
+//        $errorMiddleware->setErrorHandler(\Slim\Exception\HttpNotFoundException::class, function () {
+//            return $this->renderizarVista404();
+//        });
+//
+//        // Configurar manejo de errores 405 (método no permitido)
+//        $errorMiddleware->setErrorHandler(\Slim\Exception\HttpMethodNotAllowedException::class, function () {
+//            return $this->renderizarVista405();
+//        });
+//
+//        // Configurar manejo de errores 500 (errores internos del servidor)
+//        $errorMiddleware->setDefaultErrorHandler(function () {
+//            return $this->renderizarVistaError();
+//        });
 
-//// Middlewares personalizados
+        // Middlewares personalizados
         $this->app->add(new GestorHTTPMiddleware());
-//    $this->app->add(new VerificarInstalacionMiddleware());
-// Cargar rutas
+        //$this->app->add(new VerificarInstalacionMiddleware()); 
+        
+        // Cargar rutas
         $rutas = require_once RUTA_ENRUTADOR;
         $rutas($this->app);
     }
 
     private function renderizarVista404() {
-        return (new \Twig\Environment(new \Twig\Loader\FilesystemLoader(RUTA_VISTAS)))
-                ->render('404.html.php', [
-                    'codigo_error' => 404,
-                    'mensaje_error' => 'La página que buscas no existe.',
+        $respuesta = $this->app->getResponseFactory()->createResponse();
+
+        $twig = new \Twig\Environment(new \Twig\Loader\FilesystemLoader(RUTA_VISTAS));
+        $contenido = $twig->render('404.html.php', [
+            'codigo_error' => 404,
+            'mensaje_error' => 'La página que buscas no existe.',
+        ]);
+
+        $respuesta->getBody()->write($contenido);
+        return $respuesta->withStatus(404);
+    }
+
+    private function renderizarVista405() {
+        $respuesta = $this->app->getResponseFactory()->createResponse();
+
+        $twig = new \Twig\Environment(new \Twig\Loader\FilesystemLoader(RUTA_VISTAS));
+        $contenido = $twig->render('405.html.php', [
+            'codigo_error' => 405,
+            'mensaje_error' => 'Método no permitido.',
+        ]);
+
+        $respuesta->getBody()->write($contenido);
+        return $respuesta->withStatus(405);
+    }
+
+    private function renderizarVistaError() {
+        return vista('errores/errores',  [
+            'codigo_error' => 500,
+            'mensaje_error' => 'Ocurrió un error en el servidor. Intenta nuevamente más tarde.',
         ]);
     }
 

@@ -1,5 +1,5 @@
 <?php
-namespace SamarioPHP\Sistema\Utilidades;
+namespace SamarioPHP\Sistema;
 
 use SamarioPHP\Sistema\Servicios\AutenticacionServicio;
 

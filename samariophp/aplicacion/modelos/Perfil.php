@@ -1,5 +1,4 @@
 <?php
-namespace SamarioPHP\Aplicacion\Modelos;
 
 class Perfil extends Modelo {
 

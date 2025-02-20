@@ -2,9 +2,9 @@
 
 class Respuesta {
 
-    protected $tipo;
-    protected $mensaje;
-    protected $datos;
+    public $tipo;
+    public  $mensaje;
+    public  $datos;
 
     public function __construct($tipo = 'info', $mensaje = '', $datos = []) {
         $this->tipo = $tipo;

@@ -1,11 +1,8 @@
 <?php
 namespace SamarioPHP\Aplicacion\Controladores;
 
-use SamarioPHP\Sistema\Utilidades\Auth;
-use SamarioPHP\Sistema\Respuesta;
-use Psr\Http\Message\ResponseInterface as HTTPRespuesta;
-use Psr\Http\Message\ServerRequestInterface as HTTPSolicitud;
-use \SamarioPHP\Aplicacion\Correos\BienvenidaCorreo;
+use SamarioPHP\Sistema\Auth;
+use SamarioPHP\Aplicacion\Correos\BienvenidaCorreo;
 
 class AutenticacionControlador extends Controlador {
 
@@ -50,15 +47,15 @@ class AutenticacionControlador extends Controlador {
                 $Usuario = $respuestaRegistro->datos['usuario'];
                 $correoEnviado = $this->enviarCorreoVerificacion($Usuario);
                 if ($correoEnviado) {
-                    return Respuesta::exito('Usuario registrado y correo enviado');
+                    return exito('Usuario registrado y correo enviado');
                 } else {
-                    return Respuesta::exito('Usuario registrado, pero no se pudo enviar el correo de verificación');
+                    return exito('Usuario registrado, pero no se pudo enviar el correo de verificación');
                 }
             } else {
-                return Respuesta::error('Usuario no registrado');
+                return error('Usuario no registrado');
             }
         } catch (\Exception $e) {
-            return Respuesta::error($e->getMessage());
+            return error($e->getMessage());
         }
     }
 
@@ -110,14 +107,14 @@ class AutenticacionControlador extends Controlador {
             $Usuario = Auth::verificarCorreo($token);
             if ($Usuario) {
                 BienvenidaCorreo::enviar([$Usuario->correo, $Usuario->nombre], compact($Usuario));
-                return Respuesta::exito('Correo del Usuario verificado.', [
-                        'correo_verificado' => false,
-                        'Usuario' => $Usuario
+                return exito('Correo del Usuario verificado.', [
+                    'correo_verificado' => false,
+                    'Usuario' => $Usuario
                 ]);
             }
-            return Respuesta::error('No se pudo verificar el correo.');
+            return error('No se pudo verificar el correo.');
         } catch (\Exception $e) {
-            return Respuesta::error($e->getMessage());
+            return error($e->getMessage());
         }
     }
 
@@ -156,7 +153,7 @@ class AutenticacionControlador extends Controlador {
         if ($respuestaLogin->tipo === 'error') {
             return vista(VISTA_USUARIO_ENTRAR, ['error' => $respuestaLogin->mensaje]);
         }
-        Auth::iniciarSesion($respuestaLogin->datos['usuario']);
+        print_r($respuestaLogin->datos);
         redirigir(RUTA_ADMIN);
     }
 
@@ -192,9 +189,9 @@ class AutenticacionControlador extends Controlador {
             $cuerpo = "Haz clic en el siguiente enlace para restablecer tu contraseña: "
                 . "<a href='https://tudominio.com/restablecer?token={$token}'>Restablecer contraseña</a>";
             $this->correos->enviarCorreo($correo, $asunto, $cuerpo);
-            return Respuesta::exito('Correo de recuperación enviado');
+            return exito('Correo de recuperación enviado');
         } catch (\Exception $e) {
-            return Respuesta::error($e->getMessage());
+            return error($e->getMessage());
         }
     }
 

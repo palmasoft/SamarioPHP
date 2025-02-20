@@ -7,7 +7,7 @@ require_once DIR_FRAMEWORK . '/vendor/autoload.php';
 spl_autoload_register(function ($nombreClase) {
   // Convertir el nombre de la clase a una ruta relativa
   $rutaClaseRelativa = str_replace('\\', '/', $nombreClase) . '.php';
-
+  
   // Verificar si la clase pertenece a SamarioPHP
   if (strpos($nombreClase, 'SamarioPHP') === 0) {
     $rutaEsperada = DIR_SPHP . '' . strtolower(str_replace('SamarioPHP', '', $rutaClaseRelativa));
@@ -38,6 +38,8 @@ spl_autoload_register(function ($nombreClase) {
       }
     }
   }
+  
+  print_r($rutasExploradas);
 
   //
   // Si no se encuentra la clase, registrar el error

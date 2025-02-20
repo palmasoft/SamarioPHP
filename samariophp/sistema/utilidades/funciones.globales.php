@@ -15,3 +15,15 @@ function config($clave) {
     $config = require RUTA_CONFIGURACION;
     return $config[$clave] ?? null;
 }
+
+function alerta($mensaje, $datos = []) {
+    return Respuesta::alerta($mensaje, $datos);
+}
+
+function error($mensaje, $datos = []) {
+    return Respuesta::error($mensaje, $datos);
+}
+
+function exito($mensaje, $datos = []) {
+    return Respuesta::exito($mensaje, $datos);
+}

@@ -1,5 +1,7 @@
 <?php
-namespace SamarioPHP\Basededatos;
+namespace SamarioPHP\Sistema;
+
+use SamarioPHP\BaseDeDatos\Conexion;
 
 class BaseDatos {
 

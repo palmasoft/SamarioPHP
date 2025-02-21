@@ -10,10 +10,11 @@ class Vistas {
 
     private static $twig;
 
-    public static function inicializar($configuracion) {
-        $loader = new FilesystemLoader($configuracion['twig']['rutas_vistas']);
+    public static function inicializar() {
+        $configuracion = require_once RUTA_CONFIG_TWIG;
+        $loader = new FilesystemLoader($configuracion['rutas_vistas']);
         self::$twig = new Environment($loader, [
-            'cache' => $configuracion['twig']['cache'],
+            'cache' => $configuracion['cache'],
             'debug' => true
         ]);
 
@@ -22,8 +23,8 @@ class Vistas {
         self::agregarFuncionesPersonalizadas();
     }
 
-    private static function agregarVariablesGlobales(array $configuracion) {
-        self::$twig->addGlobal('app', $configuracion['aplicacion']);
+    private static function agregarVariablesGlobales() {
+        self::$twig->addGlobal('app', config('aplicacion'));
     }
 
     private static function agregarFuncionesPersonalizadas() {
@@ -37,7 +38,7 @@ class Vistas {
 
     public static function renderizar(string $vista, array $datos = []): HTTPRespuesta {
         if (!self::$twig) {
-            throw new \Exception('Twig no está inicializado. Asegúrate de llamar a Vistas::inicializar() primero.');
+            self::inicializar();
         }
 
         $respuesta = \GestorHTTP::obtenerRespuesta();

@@ -1,13 +1,27 @@
 <?php
 namespace SamarioPHP\Sistema\Servicios;
 
-
 class AutenticacionServicio {
 
     protected $usuarioServicio;
 
     public function __construct(UsuarioServicio $usuarioServicio) {
         $this->usuarioServicio = $usuarioServicio;
+    }
+
+    public function registrar($correo, $contrasena, $nombre) {
+        $respuestaRegistro = $this->usuarioServicio->registrar($correo, $contrasena, $nombre);
+
+        if ($respuestaRegistro->tipo !== 'exito') {
+            return $respuestaRegistro;
+        }
+
+        SesionServicio::iniciar($respuestaRegistro->datos['usuario']);
+        return exito("Usuario registrado e iniciado sesión.", ['usuario' => $respuestaRegistro->datos['usuario']]);
+    }
+
+    public function existeUsuario($correo) { 
+        return $this->usuarioServicio->existeCorreo($correo);
     }
 
     public function validarCredenciales($correo, $contrasena) {
@@ -23,17 +37,6 @@ class AutenticacionServicio {
 
         SesionServicio::iniciar($Usuario);
         return exito("Inicio de sesión exitoso.", ['usuario' => $Usuario]);
-    }
-
-    public function registrar($correo, $contrasena, $nombre) {
-        $respuestaRegistro = $this->usuarioServicio->registrar($correo, $contrasena, $nombre);
-
-        if ($respuestaRegistro->tipo !== 'exito') {
-            return $respuestaRegistro;
-        }
-
-        SesionServicio::iniciar($respuestaRegistro->datos['usuario']);
-        return exito("Usuario registrado e iniciado sesión.", ['usuario' => $respuestaRegistro->datos['usuario']]);
     }
 
     public function cerrarSesion() {

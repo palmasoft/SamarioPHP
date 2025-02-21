@@ -10,8 +10,8 @@ return function ($aplicacion) {
 // Cargar rutas fijas
   $rutasFijas = require __DIR__ . '/rutas_fijas.php';
   $rutasFijas($aplicacion);
-
-// Cargar rutas dinámicas
-  $rutasDinamicas = require __DIR__ . '/rutas_dinamicas.php';
-  $rutasDinamicas($aplicacion);
+//
+//// Cargar rutas dinámicas
+//  $rutasDinamicas = require __DIR__ . '/rutas_dinamicas.php';
+//  $rutasDinamicas($aplicacion);
 };

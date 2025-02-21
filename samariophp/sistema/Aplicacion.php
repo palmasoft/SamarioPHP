@@ -47,8 +47,7 @@ class Aplicacion {
         // Cargar configuración para Medoo desde una ruta definida
         $configMedoo = require_once RUTA_CONFIG_MEEDO;
         BaseDatos::iniciar($configMedoo($this->configuracion));
-        // Inicializar Twig en la clase Vistas
-        Vistas::inicializar($this->configuracion);
+        
         // Inicializar la sesión
         Auth::setServicio(new AutenticacionServicio(new UsuarioServicio()));
     }
@@ -63,12 +62,12 @@ class Aplicacion {
         $this->app = \Slim\Factory\AppFactory::create();
         $this->app->addRoutingMiddleware();
 
-        // Configurar manejo de errores usando los parámetros del archivo de configuración
-        $errorMiddleware = $this->app->addErrorMiddleware(
-            $configuracionSlim['error_middleware']['mostrar_errores'],
-            $configuracionSlim['error_middleware']['log_errores'],
-            $configuracionSlim['error_middleware']['mostrar_detalles']
-        );
+//        // Configurar manejo de errores usando los parámetros del archivo de configuración
+//        $errorMiddleware = $this->app->addErrorMiddleware(
+//            $configuracionSlim['error_middleware']['mostrar_errores'],
+//            $configuracionSlim['error_middleware']['log_errores'],
+//            $configuracionSlim['error_middleware']['mostrar_detalles']
+//        );
 
 //        // Configurar manejo de errores 404
 //        $errorMiddleware->setErrorHandler(\Slim\Exception\HttpNotFoundException::class, function () {
@@ -84,14 +83,30 @@ class Aplicacion {
 //        $errorMiddleware->setDefaultErrorHandler(function () {
 //            return $this->renderizarVistaError();
 //        });
-
         // Middlewares personalizados
         $this->app->add(new GestorHTTPMiddleware());
         //$this->app->add(new VerificarInstalacionMiddleware()); 
-        
         // Cargar rutas
         $rutas = require_once RUTA_ENRUTADOR;
         $rutas($this->app);
+    }
+
+    private function validarConfiguracion($configuracion) {
+        $validador = require_once RUTA_CONFIG_VALIDACION;
+        try {
+            $validador($configuracion);
+        } catch (\Exception $e) {
+            Log::critico('Error en la configuración: ' . $e->getMessage());
+            exit('La configuración del sistema es inválida. Por favor, revisa el archivo de configuración.');
+        }
+    }
+
+    public function arrancar() {
+// Registro de inicio del sistema
+        Log::info('El sistema inició correctamente.');
+
+// Ejecutar la aplicación Slim
+        $this->app->run();
     }
 
     private function renderizarVista404() {
@@ -121,28 +136,10 @@ class Aplicacion {
     }
 
     private function renderizarVistaError() {
-        return vista('errores/errores',  [
+        return vista('errores/errores', [
             'codigo_error' => 500,
             'mensaje_error' => 'Ocurrió un error en el servidor. Intenta nuevamente más tarde.',
         ]);
-    }
-
-    private function validarConfiguracion($configuracion) {
-        $validador = require_once RUTA_CONFIG_VALIDACION;
-        try {
-            $validador($configuracion);
-        } catch (\Exception $e) {
-            Log::critico('Error en la configuración: ' . $e->getMessage());
-            exit('La configuración del sistema es inválida. Por favor, revisa el archivo de configuración.');
-        }
-    }
-
-    public function arrancar() {
-// Registro de inicio del sistema
-        Log::info('El sistema inició correctamente.');
-
-// Ejecutar la aplicación Slim
-        $this->app->run();
     }
 
 }

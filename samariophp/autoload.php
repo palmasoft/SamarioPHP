@@ -5,9 +5,11 @@ require_once DIR_FRAMEWORK . '/vendor/autoload.php';
  * Autoloader personalizado para cargar clases desde las carpetas definidas.
  */
 spl_autoload_register(function ($nombreClase) {
+    echo $nombreClase. "                    ======>>>>>>>>>>>> <br />";
+    
   // Convertir el nombre de la clase a una ruta relativa
   $rutaClaseRelativa = str_replace('\\', '/', $nombreClase) . '.php';
-  
+
   // Verificar si la clase pertenece a SamarioPHP
   if (strpos($nombreClase, 'SamarioPHP') === 0) {
     $rutaEsperada = DIR_SPHP . '' . strtolower(str_replace('SamarioPHP', '', $rutaClaseRelativa));
@@ -33,16 +35,15 @@ spl_autoload_register(function ($nombreClase) {
       $rutaActual = $archivo->getPathname();
       $rutasExploradas[] = $rutaActual;
       if (basename($rutaActual, '.php') === $nombreClaseSimple) {
+          echo $rutaActual . "   <br />";
         include_once $rutaActual;
         return;
       }
     }
   }
-  
-  print_r($rutasExploradas);
 
-  //
+  echo $msg = "Autoload Error: No se encontró la clase '{$nombreClase}'. Ruta esperada: {$rutaClaseRelativa}";
   // Si no se encuentra la clase, registrar el error
-  error_log("Autoload Error: No se encontró la clase '{$nombreClase}'. Ruta esperada: {$rutaClaseRelativa}");
+  error_log($msg);
 });
 

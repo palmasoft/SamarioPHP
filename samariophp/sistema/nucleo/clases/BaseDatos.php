@@ -1,4 +1,5 @@
 <?php
+
 namespace SamarioPHP\Sistema;
 
 use SamarioPHP\BaseDeDatos\Conexion;
@@ -10,9 +11,10 @@ class BaseDatos {
     public $conexion;
 
     // Método para obtener la instancia de la conexión
-    public static function iniciar($configuracion) {
+    public static function iniciar() {
         // Verificar si ya existe una conexión
         if (self::$Instancia === null) {
+            $configuracion = require_once RUTA_CONFIG_MEEDO;
             // Si no existe, crear una nueva instancia de la clase BaseDatos
             self::$Instancia = new self($configuracion);
         }
@@ -77,7 +79,6 @@ class BaseDatos {
 
         return $total == 0;
     }
-    
 
     // Método estático para acceder a la conexión desde métodos estáticos
     public static function obtenerConexion() {
@@ -87,12 +88,9 @@ class BaseDatos {
         return self::$Instancia->conexion;
     }
 
-
     // Método estático para ejecutar consultas SQL
     public static function consultar($consulta, $parametros = []) {
         $conexion = self::obtenerConexion();
         return $conexion->query($consulta, $parametros);
     }
-
-
 }

@@ -1,6 +1,5 @@
 <?php
-namespace SamarioPHP\Basededatos;
-
+use SamarioPHP\Sistema\BaseDatos;
 use SamarioPHP\Sistema\Utilidades\BD;
 use SamarioPHP\Sistema\Utilidades\GestorNombres;
 

@@ -1,5 +1,5 @@
 <?php
-define('DIR_FRAMEWORK', __DIR__ . DIRECTORY_SEPARATOR);
+
 
 // Definir constantes para las rutas
 define('DIR_ALMACEN', DIR_FRAMEWORK . 'almacen/');

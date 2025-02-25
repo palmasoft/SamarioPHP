@@ -1,6 +1,4 @@
 <?php
-namespace SamarioPHP\Sistema\Utilidades;
-
 use Psr\Http\Message\ResponseInterface as HTTPRespuesta;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
@@ -36,6 +34,11 @@ class Vistas {
                 }, ['is_safe' => ['html']]));
     }
 
+    public static function esVistaPublica(string $ruta): bool {
+        $archivo_vista = $ruta . VISTA_EXTENSION;
+        return file_exists(DIR_PAGINASWEB . $archivo_vista);
+    }
+
     public static function renderizar(string $vista, array $datos = []): HTTPRespuesta {
         if (!self::$twig) {
             self::inicializar();
@@ -66,8 +69,8 @@ class Vistas {
         }
 
         // Buscar en las vistas públicas
-        if (file_exists(DIR_VISTAS_PUBLICAS . $archivo_vista)) {
-            $html = self::$twig->render($archivo_vista, $datos);
+        if (self::esVistaPublica($vista)) {
+            $html = self::$twig->render('web/' . $archivo_vista, $datos);
             $respuesta->getBody()->write($html);
             return $respuesta;
         }

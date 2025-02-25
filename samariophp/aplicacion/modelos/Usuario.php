@@ -1,7 +1,4 @@
 <?php
-namespace SamarioPHP\Aplicacion\Modelos;
-
-use SamarioPHP\Basededatos\Modelo;
 
 class Usuario extends Modelo {
 

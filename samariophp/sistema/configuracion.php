@@ -21,7 +21,7 @@ return [
         'version' => '24.01', // año paquete  
         'dominio' => 'cogeunnumero.com',
         'url_base' => 'https://app.cogeunnumero.com',
-        'logo' => '/img/samarioPHP.png', 
+        'logo' => '/img/samarioPHP.png',
         'correo_contacto' => 'contacto@cogeunnumero.com',
         'correo_soporte' => 'soporte@cogeunnumero.com',
     ],
@@ -44,6 +44,5 @@ return [
     "autenticador" => [
     ],
     'archivos' => [
-    ],
-    'twig' => require_once RUTA_CONFIG_TWIG,
+    ]
 ];

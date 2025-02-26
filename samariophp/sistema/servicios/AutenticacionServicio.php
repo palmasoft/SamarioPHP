@@ -20,7 +20,7 @@ class AutenticacionServicio {
         return exito("Usuario registrado e iniciado sesión.", ['usuario' => $respuestaRegistro->datos['usuario']]);
     }
 
-    public function existeUsuario($correo) {
+    public function existeUsuario($correo) { 
         return $this->usuarioServicio->existeCorreo($correo);
     }
 

@@ -1,7 +1,7 @@
 <?php
 
 function vista(string $vista, array $datos = []): \Psr\Http\Message\ResponseInterface {
-    return Vistas::renderizar($vista, $datos);
+    return SamarioPHP\Sistema\Utilidades\Vistas::renderizar($vista, $datos);
 }
 
 

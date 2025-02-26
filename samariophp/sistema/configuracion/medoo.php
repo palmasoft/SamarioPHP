@@ -8,5 +8,8 @@ return [
     'password' => config('base_de_datos.clave_usuario'),
     'charset' => config('base_de_datos.conjunto_caracteres'),
     'port' => config('base_de_datos.puerto'),
-    'fetch' => PDO::FETCH_OBJ, // Configuramos para que devuelva objetos
+    'fetch' => PDO::FETCH_OBJ, // Configuramos para que devuelva objetos,
+    'option' => [
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ // ← Aquí configuramos para devolver objetos
+    ]
 ];

@@ -34,34 +34,36 @@ class UsuarioServicio {
         return substr($nombreUsuario, 0, 21);
     }
 
+//
+    public function recuperarContrasena($correo) {
+        $Usuario = Usuario::para('correo', $correo) ?? null;
+        if (!$Usuario) {
+            return error("Correo no encontrado.");
+        }
+
+        $token = bin2hex(random_bytes(32));
+        $Usuario->rellenar(['token_recuperacion' => $token]);
+        $Usuario->guardar();
+
+        // Aquí puedes integrar el envío de correo con el token
+        return exito("Se ha enviado un correo para restablecer la contraseña.", ['token' => $token]);
+    }
+
+    public function restablecerContrasena($token, $nuevaContrasena) {
+        $Usuario = Usuario::para('token_recuperacion', $token) ?? null;
+        if (!$Usuario) {
+            return error("Token no válido.");
+        }
+
+        $Usuario->rellenar([
+            'contrasena' => password_hash($nuevaContrasena, PASSWORD_BCRYPT),
+            'token_recuperacion' => null
+        ]);
+        $Usuario->guardar();
+
+        return exito("Contraseña restablecida con éxito.");
+    }
+
+//
+
 }
-//
-//    public function recuperarContrasena($correo) {
-//        $Usuario = Usuario::para('correo', $correo) ?? null;
-//        if (!$Usuario) {
-//            return error("Correo no encontrado.");
-//        }
-//
-//        $token = bin2hex(random_bytes(32));
-//        $Usuario->rellenar(['token_recuperacion' => $token]);
-//        $Usuario->guardar();
-//
-//        // Aquí puedes integrar el envío de correo con el token
-//        return exito("Se ha enviado un correo para restablecer la contraseña.", ['token' => $token]);
-//    }
-//
-//    public function restablecerContrasena($token, $nuevaContrasena) {
-//        $Usuario = Usuario::para('token_recuperacion', $token) ?? null;
-//        if (!$Usuario) {
-//            return error("Token no válido.");
-//        }
-//
-//        $Usuario->rellenar([
-//            'contrasena' => password_hash($nuevaContrasena, PASSWORD_BCRYPT),
-//            'token_recuperacion' => null
-//        ]);
-//        $Usuario->guardar();
-//
-//        return exito("Contraseña restablecida con éxito.");
-//    }
-//

@@ -1,4 +1,8 @@
 <?php
+use SamarioPHP\Aplicacion\Controladores\AppControlador;
+use SamarioPHP\Aplicacion\Controladores\AutenticacionControlador;
+use SamarioPHP\Aplicacion\Controladores\InstalacionControlador;
+use SamarioPHP\Aplicacion\Controladores\WebControlador;
 
 class GestorRutas {
 
@@ -12,12 +16,12 @@ class GestorRutas {
             "inicio" => [WebControlador::class, 'mostrarInicio'],
             "instalar" => [InstalacionControlador::class, 'mostrarInstalacion'],
             "instalar_post" => [InstalacionControlador::class, 'ejecutarInstalacion'],
-            "usuario/registro" => [AutenticacionControlador::class, 'mostrarVistaRegistro'],
-            "usuario/registro_post" => [AutenticacionControlador::class, 'procesarRegistro'],
-            "usuario/verificar" => [AutenticacionControlador::class, 'verificarCorreoElectronico'],
-            "usuario/recuperar-clave" => [AutenticacionControlador::class, 'mostrarFormularioRecuperarClave'],
-            "usuario/entrar" => [AutenticacionControlador::class, 'mostrarFormularioLogin'],
-            "usuario/entrar_post" => [AutenticacionControlador::class, 'procesarLogin'],
+            "registro" => [AutenticacionControlador::class, 'mostrarVistaRegistro'],
+            "registro_post" => [AutenticacionControlador::class, 'procesarRegistro'],
+            "verificar" => [AutenticacionControlador::class, 'verificarCorreoElectronico'],
+            "recuperar-clave" => [AutenticacionControlador::class, 'mostrarFormularioRecuperarClave'],
+            "inicio-sesion" => [AutenticacionControlador::class, 'mostrarFormularioLogin'],
+            "inicio-sesion_post" => [AutenticacionControlador::class, 'procesarLogin'],
             "usuario/salir" => [AutenticacionControlador::class, 'cerrarSesion'],
             "usuario/salir_post" => [AutenticacionControlador::class, 'cerrarSesion'],
             "admin" => [AppControlador::class, 'mostrarPanelAdministracion'],
@@ -41,13 +45,13 @@ class GestorRutas {
 
     function obtenerRuta($uri, $metodo) {
         return $this->db->query(
-                        "SELECT * FROM permisos WHERE ruta = :ruta AND metodo = :metodo LIMIT 1",
-                        ['ruta' => $uri, 'metodo' => $metodo]
-                );
+                "SELECT * FROM permisos WHERE ruta = :ruta AND metodo = :metodo LIMIT 1",
+                ['ruta' => $uri, 'metodo' => $metodo]
+        );
     }
 
     function obtenerControlador($nombreControlador) {
-        $clase = "\\App\\Controladores\\{$nombreControlador}";
+        $clase = "\\SamarioPHP\\Aplicacion\\Controladores\\{$nombreControlador}";
         if (!class_exists($clase)) {
             throw new Exception("El controlador {$nombreControlador} no existe.");
         }
@@ -68,7 +72,7 @@ class GestorRutas {
     }
 
     private function resolverRutaDinamica($uri) {
-// Consulta a la base de datos para obtener controlador y operación
+        // Consulta a la base de datos para obtener controlador y operación
         $sql = "SELECT controlador, operacion FROM rutas WHERE ruta = :ruta LIMIT 1";
         $stmt = $this->db->prepare($sql);
         $stmt->bindParam(':ruta', $uri);
@@ -79,7 +83,7 @@ class GestorRutas {
             return $this->ejecutarRuta($resultado);
         }
 
-// Si no existe la ruta, devuelve un error 404
+        // Si no existe la ruta, devuelve un error 404
         http_response_code(404);
         echo "Error 404: Ruta no encontrada.";
     }
@@ -96,8 +100,9 @@ class GestorRutas {
             }
         }
 
-// Error si no existe controlador u operación
+        // Error si no existe controlador u operación
         http_response_code(500);
         echo "Error 500: No se pudo ejecutar la operación.";
     }
+
 }

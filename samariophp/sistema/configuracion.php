@@ -9,9 +9,9 @@ return [
         'tipo' => 'mysql',
         'servidor' => '162.240.97.33',
         'puerto' => 3306,
-        'nombre_basedatos' => 'c0g3num3r0_l4r4v3lAPP',
-        'nombre_usuario' => 'c0g3num3r0',
-        'clave_usuario' => 'epmUVDv44ybTG7C',
+        'nombre_basedatos' => 'c0g3num3r0_samarioPHP',
+        'nombre_usuario' => 'c0g3num3r0_sPHP',
+        'clave_usuario' => 'rbixSmF,Tk!e',
         'conjunto_caracteres' => 'utf8',
     ],
     'aplicacion' => [

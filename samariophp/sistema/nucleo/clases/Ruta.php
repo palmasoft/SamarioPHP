@@ -26,6 +26,10 @@ class Ruta {
     public static function esPublica(string $ruta) {
         return Vistas::esVistaPublica($ruta);
     }
+        
+    public static function esWEB(string $ruta) {
+        return Vistas::esVistaWEB($ruta);
+    }
 
     public static function esPrivada(string $ruta, $metodo) {
         if (self::buscar($ruta, $metodo)) {

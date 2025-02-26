@@ -36,6 +36,11 @@ class Vistas {
 
     public static function esVistaPublica(string $ruta): bool {
         $archivo_vista = $ruta . VISTA_EXTENSION;
+        return file_exists(DIR_PUBLICO . $archivo_vista);
+    }
+
+    public static function esVistaWEB(string $ruta): bool {
+        $archivo_vista = $ruta . VISTA_EXTENSION;
         return file_exists(DIR_PAGINASWEB . $archivo_vista);
     }
 

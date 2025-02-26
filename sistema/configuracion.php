@@ -10,8 +10,8 @@ return [
         'servidor' => '162.240.97.33',
         'puerto' => 3306,
         'nombre_basedatos' => 'c0g3num3r0_l4r4v3lAPP',
-        'nombre_usuario' => 'c0g3num3r0',
-        'clave_usuario' => 'epmUVDv44ybTG7C',
+        'nombre_usuario' => 'c0g3num3r0_l4r4v3l_USER',
+        'clave_usuario' => 'CNCwJz!]aL!]',
         'conjunto_caracteres' => 'utf8',
     ],
     'aplicacion' => [

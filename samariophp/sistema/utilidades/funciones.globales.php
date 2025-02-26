@@ -4,6 +4,7 @@ function vista(string $vista, array $datos = []): \Psr\Http\Message\ResponseInte
     return SamarioPHP\Sistema\Utilidades\Vistas::renderizar($vista, $datos);
 }
 
+
 function redirigir($ruta) {
     header("Location: " . $ruta);
     exit;

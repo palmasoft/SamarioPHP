@@ -2,13 +2,14 @@
 namespace SamarioPHP\Sistema;
 
 use SamarioPHP\Sistema\Servicios\AutenticacionServicio;
+use SamarioPHP\Sistema\Servicios\UsuarioServicio;
 
 class Auth {
 
     protected static $autenticacionServicio;
 
-    public static function setServicio(AutenticacionServicio $servicio) {
-        self::$autenticacionServicio = $servicio;
+    public static function arrancarServicio() {
+        self::$autenticacionServicio = new AutenticacionServicio(new UsuarioServicio());
     }
 
     public static function __callStatic($metodo, $argumentos) {

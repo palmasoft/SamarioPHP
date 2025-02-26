@@ -1,5 +1,4 @@
 <?php
-use SamarioPHP\Sistema\BaseDatos;
 use SamarioPHP\Sistema\Utilidades\BD;
 use SamarioPHP\Sistema\Utilidades\GestorNombres;
 
@@ -11,7 +10,7 @@ class Modelo {
     protected $conexion;
 
     public function __construct($id = null) {
-        $this->conexion = BaseDatos::obtenerConexion();
+        $this->conexion = BD::obtenerConexion();
         $this->tabla = GestorNombres::convertirNombreClaseATabla(strtolower((new \ReflectionClass($this))->getShortName()), true);  // Tabla en plural
         $this->conexion->tabla($this->tabla);
         $this->id = ($id ?? $this->id);

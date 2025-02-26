@@ -1,4 +1,5 @@
 <?php
+
 namespace SamarioPHP\Sistema\Middleware;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -8,27 +9,14 @@ use SamarioPHP\Sistema\Auth;
 
 class AutenticacionMiddleware {
 
-    private $gestorRutas;
-
-    public function __construct(\GestorRutas $gestorRutas) {
-        $this->gestorRutas = $gestorRutas;
-    }
-
     public function __invoke(Request $request, Handler $handler): Response {
-        session_start();
+        Auth::arrancarServicio();
 
         // Obtener la ruta desde la URL
         $ruta = trim(parse_url($request->getUri()->getPath(), PHP_URL_PATH), '/');
         $metodo = $request->getMethod();
 
-        // Si la vista existe en /publico/vistas/, la consideramos pública
-        if ($ruta === '' || esVistaPublica($ruta)) {
-            return $handler->handle($request);
-        }
-
-
-        // Si la ruta es fija y gestionada por el GestorRutas, dejarla pasar
-        if ($this->gestorRutas->esRutaFija($ruta, $metodo)) {
+        if (!\Ruta::esPrivada($ruta, $metodo)) {
             return $handler->handle($request);
         }
 
@@ -50,5 +38,4 @@ class AutenticacionMiddleware {
         // Si el usuario está autenticado, continuar con la ejecución de la ruta
         return $handler->handle($request);
     }
-
 }

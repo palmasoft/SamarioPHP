@@ -1,6 +1,4 @@
 <?php
-namespace SamarioPHP\Sistema\Utilidades;
-
 use Psr\Http\Message\ResponseInterface as HTTPRespuesta;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;

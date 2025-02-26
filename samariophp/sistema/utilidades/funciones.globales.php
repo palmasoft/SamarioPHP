@@ -4,10 +4,6 @@ function vista(string $vista, array $datos = []): \Psr\Http\Message\ResponseInte
     return Vistas::renderizar($vista, $datos);
 }
 
-function esVistaPublica(string $ruta){
-    echo $ruta. ".............<br />";
-    return Vistas::esVistaPublica($ruta);
-}
 
 function redirigir($ruta) {
     header("Location: " . $ruta);

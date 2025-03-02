@@ -1,114 +1,118 @@
 <?php
 
-use SamarioPHP\Aplicacion\Controladores\AppControlador;
-use SamarioPHP\Aplicacion\Controladores\AutenticacionControlador;
-use SamarioPHP\Aplicacion\Controladores\InstalacionControlador;
-use SamarioPHP\Aplicacion\Controladores\WebControlador;
-
 class Ruta {
 
-    private $rutasFijas = [
-        "" => [WebControlador::class, 'mostrarInicio'],
-        "inicio" => [WebControlador::class, 'mostrarInicio'],
-        "instalar" => [InstalacionControlador::class, 'mostrarInstalacion'],
-        "instalar_post" => [InstalacionControlador::class, 'ejecutarInstalacion'],
-        "registro" => [AutenticacionControlador::class, 'mostrarVistaRegistro'],
-        "registro_post" => [AutenticacionControlador::class, 'procesarRegistro'],
-        "verificar" => [AutenticacionControlador::class, 'verificarCorreoElectronico'],
-        "recuperar-clave" => [AutenticacionControlador::class, 'mostrarFormularioRecuperarClave'],
-        "inicio-sesion" => [AutenticacionControlador::class, 'mostrarFormularioLogin'],
-        "inicio-sesion_post" => [AutenticacionControlador::class, 'procesarLogin'],
-        "usuario/salir" => [AutenticacionControlador::class, 'cerrarSesion'],
-        "usuario/salir_post" => [AutenticacionControlador::class, 'cerrarSesion'],
-        "admin" => [AppControlador::class, 'mostrarPanelAdministracion'],
-    ];
+    private $uri;
+    private $tipo;
+    private $metodo;
+    public static $Permiso;
 
-    public static function esPublica(string $ruta) {
+    public function __construct($uri, $metodo = null) {
+        $this->uri = rtrim($uri, '/'); // Normalizar la URI (eliminar barras al final)
+        // Normalizar la ruta vacía
+        if ($this->uri === "/") {
+            $this->uri = "";
+        }
+        $this->tipo = $this->detectarTipoRuta();
+        $this->metodo = $metodo;
+    }
+
+    public function obtenerUri() {
+        return $this->uri;
+    }
+
+    public function obtenerTipo() {
+        return $this->tipo;
+    }
+
+    public function obtenerMetodo() {
+        return $this->metodo;
+    }
+
+    public function esValida() {
+        if (is_null($this->tipo)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Detecta el tipo de ruta.
+     */
+    private function detectarTipoRuta() {
+
+        // Comprobamos si la ruta está en las rutas fijas a través de la clase Rutas
+        if (Rutas::esRutaFija($this->uri, $this->metodo)) {
+            return Rutas::TIPO_FIJA;
+        }
+
+        // Primero, comprobamos si la ruta es pública
+        if ($this->esRutaPublica()) {
+            return Rutas::TIPO_PUBLICA;
+        }
+        // Primero, comprobamos si la ruta es pública
+        if ($this->esRutaWeb()) {
+            return Rutas::TIPO_WEB;
+        }
+
+        // Si no está en las rutas fijas, la consideramos dinámica
+        if ($this->esDinamica()) {
+            return Rutas::TIPO_DINAMICA;
+        }
+
+        // Luego, comprobamos si la ruta es privada
+        if ($this->esRutaPrivada()) {
+            return Rutas::TIPO_PRIVADA;
+        }
+
+        return null;
+    }
+
+    private function esRutaFija($ruta, $metodo) {
+        return Rutas::esRutaFija($ruta, $metodo);
+    }
+
+    public static function esFija($ruta, $metodo) {
+        return Rutas::esRutaFija($ruta, $metodo);
+    }
+
+    /**
+     * Verifica si la ruta es pública.
+     */
+    private function esRutaPublica() {
+        return Vistas::esVistaPublica($this->uri);
+    }
+
+    // Estos métodos pueden quedarse aquí si son específicos de esta ruta
+    public static function esPublica($ruta) {
         return Vistas::esVistaPublica($ruta);
     }
-        
-    public static function esWEB(string $ruta) {
+
+    private function esRutaWeb() {
+        return self::esWEB($this->uri);
+    }
+
+    public static function esWEB($ruta) {
         return Vistas::esVistaWEB($ruta);
     }
 
-    public static function esPrivada(string $ruta, $metodo) {
-        if (self::buscar($ruta, $metodo)) {
+    /**
+     * Verifica si la ruta es privada.
+     */
+    private function esRutaPrivada() {
+        return self::esPrivada($this->uri, $this->metodo);
+    }
+
+    public static function esPrivada($ruta, $metodo = null) {
+        self::$Permiso = self::buscar($ruta, $metodo);
+        if (self::$Permiso) {
             return true;
         }
         return false;
-    }
-
-    public static function esRutaFija($ruta, $metodo) {
-        $clave = $ruta . ($metodo === 'POST' ? '_post' : '');
-        return isset(self::$rutasFijas[$clave]);
-    }
-
-    public static function ejecutarRutaFija($ruta, $metodo) {
-        $clave = $ruta . ($metodo === 'POST' ? '_post' : '');
-        if (!self::esRutaFija($ruta, $metodo)) {
-            return false;
-        }
-        [$controlador, $metodo] = self::$rutasFijas[$clave];
-        $instancia = new $controlador();
-        return $instancia->$metodo();
     }
 
     static function buscar($uri, $metodo) {
         return Permiso::donde(['ruta' => $uri, 'metodo_http' => $metodo]);
     }
 
-    static function obtenerControlador($nombreControlador) {
-        $clase = "\\SamarioPHP\\Aplicacion\\Controladores\\{$nombreControlador}";
-        if (!class_exists($clase)) {
-            throw new Exception("El controlador {$nombreControlador} no existe.");
-        }
-        return new $clase();
-    }
-
-    public static function resolverRuta($uri) {
-        // Normalizar la URI (eliminar barras al final)
-        $uri = rtrim($uri, '/');
-
-        // Primero verifica si la ruta es fija
-        if (array_key_exists($uri, self::$rutasFijas)) {
-            return self::ejecutarRuta(self::$rutasFijas[$uri]);
-        }
-
-        // Si no es fija, busca en la base de datos
-        return self::resolverRutaDinamica($uri);
-    }
-
-    private static function resolverRutaDinamica($uri) {
-        // Consulta a la base de datos para obtener controlador y operación
-        $sql = "SELECT controlador, operacion FROM rutas WHERE ruta = :ruta LIMIT 1";
-        $stmt = self::db->prepare($sql);
-        $stmt->bindParam(':ruta', $uri);
-        $stmt->execute();
-        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($resultado) {
-            return self::ejecutarRuta($resultado);
-        }
-
-        // Si no existe la ruta, devuelve un error 404
-        http_response_code(404);
-        echo "Error 404: Ruta no encontrada.";
-    }
-
-    private static function ejecutarRuta($config) {
-        $controladorNombre = "\\Controladores\\" . $config['controlador'];
-        $operacion = $config['operacion'];
-
-        if (class_exists($controladorNombre)) {
-            $controlador = new $controladorNombre();
-
-            if (method_exists($controlador, $operacion)) {
-                return $controlador->$operacion();
-            }
-        }
-
-        // Error si no existe controlador u operación
-        http_response_code(500);
-        echo "Error 500: No se pudo ejecutar la operación.";
-    }
 }

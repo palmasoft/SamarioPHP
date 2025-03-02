@@ -10,15 +10,17 @@ class Vistas {
 
     public static function inicializar() {
         $configuracion = require_once RUTA_CONFIG_TWIG;
+        self::configurarTwig($configuracion);
+        self::agregarVariablesGlobales();
+        self::agregarFuncionesPersonalizadas();
+    }
+
+    private static function configurarTwig($configuracion) {
         $loader = new FilesystemLoader($configuracion['rutas_vistas']);
         self::$twig = new Environment($loader, [
             'cache' => $configuracion['cache'],
             'debug' => true
         ]);
-
-        // Variables globales y funciones personalizadas
-        self::agregarVariablesGlobales($configuracion);
-        self::agregarFuncionesPersonalizadas();
     }
 
     private static function agregarVariablesGlobales() {
@@ -26,22 +28,28 @@ class Vistas {
     }
 
     private static function agregarFuncionesPersonalizadas() {
+        // Función personalizada para mostrar un mensaje de alerta de error
         self::$twig->addFunction(new TwigFunction('alerta_error', function ($mensaje) {
-                    if (empty($mensaje)) {
-                        return "";
-                    }
-                    return '<div class="alerta alerta-error"><strong>Error:</strong> ' . htmlspecialchars($mensaje) . '</div>';
+                    return empty($mensaje) ? "" : '<div class="alerta alerta-error"><strong>Error:</strong> ' . htmlspecialchars($mensaje) . '</div>';
                 }, ['is_safe' => ['html']]));
+
+        // Función personalizada para formatear fechas
+        self::$twig->addFunction(new TwigFunction('formato_fecha', function ($fecha) {
+                    // Verificamos si la fecha está vacía o no es válida
+                    if (empty($fecha)) {
+                        return '';
+                    }
+                    // Intentamos formatear la fecha usando strtotime
+                    $timestamp = strtotime($fecha);
+                    if ($timestamp === false) {
+                        return ''; // Si no es una fecha válida, devolvemos una cadena vacía
+                    }
+                    return date('Y/m/d', $timestamp); // Formato de fecha: día/mes/año
+                }));
     }
 
-    public static function esVistaPublica(string $ruta): bool {
-        $archivo_vista = $ruta . VISTA_EXTENSION;
-        return file_exists(DIR_PUBLICO . $archivo_vista);
-    }
-
-    public static function esVistaWEB(string $ruta): bool {
-        $archivo_vista = $ruta . VISTA_EXTENSION;
-        return file_exists(DIR_PAGINASWEB . $archivo_vista);
+    public static function esVistaDisponible(string $ruta, string $directorio): bool {
+        return file_exists($directorio . $ruta . VISTA_EXTENSION);
     }
 
     public static function renderizar(string $vista, array $datos = []): HTTPRespuesta {
@@ -52,43 +60,54 @@ class Vistas {
         $respuesta = \GestorHTTP::obtenerRespuesta();
         $archivo_vista = $vista . VISTA_EXTENSION;
 
-        // Buscar primero en el módulo
-        $partes_vista = explode('.', $vista);
-        if (count($partes_vista) == 2) {
-            list($modulo, $nombre_vista) = $partes_vista;
-            $archivo_vista = $nombre_vista . VISTA_EXTENSION;
-            $ruta_vista = 'componentes/' . $modulo . '/vistas/' . $archivo_vista;
-            if (file_exists(DIR_APP . $ruta_vista)) {
-                $html = self::$twig->render($ruta_vista, $datos);
-                $respuesta->getBody()->write($html);
-                return $respuesta;
-            } else {
-                throw new \Exception("La vista '{$archivo_vista}' no existe en [ " . DIR_APP . $ruta_vista . " ].");
-            }
-        } else {
-            if (file_exists(DIR_APP . $archivo_vista)) {
-                $html = self::$twig->render($archivo_vista, $datos);
-                $respuesta->getBody()->write($html);
-                return $respuesta;
-            }
-        }
-
-        // Buscar en las vistas públicas
-        if (self::esVistaPublica($vista)) {
-            $html = self::$twig->render('web/' . $archivo_vista, $datos);
-            $respuesta->getBody()->write($html);
+        if (self::renderizarDesdeModulo($vista, $datos, $respuesta)) {
             return $respuesta;
         }
 
-        // Buscar en la carpeta de vistas estándar
-        if (file_exists(DIR_PUBLICO . $archivo_vista)) {
+        if (self::renderizarDesdeDirectorio(DIR_PAGINASWEB, $archivo_vista, $datos, $respuesta)) {
+            return $respuesta;
+        }
+
+        if (self::renderizarDesdeDirectorio(DIR_VISTAS_PUBLICAS, $archivo_vista, $datos, $respuesta)) {
+            return $respuesta;
+        }
+
+        throw new \Exception("La vista '{$archivo_vista}' no existe en [ " . DIR_PUBLICO . " ].");
+    }
+
+    private static function renderizarDesdeModulo(string $vista, array $datos, HTTPRespuesta &$respuesta): bool {
+        $partes_vista = explode('.', $vista);
+        if (count($partes_vista) !== 2) {
+            return false;
+        }
+        list($modulo, $nombre_vista) = $partes_vista;
+        $ruta_vista = "componentes/{$modulo}/vistas/" . $nombre_vista . VISTA_EXTENSION;
+        return self::renderizarDesdeDirectorio(DIR_APP, $ruta_vista, $datos, $respuesta);
+    }
+
+    private static function renderizarDesdeDirectorio(string $directorio, string $archivo_vista, array $datos, HTTPRespuesta &$respuesta): bool {
+        if (file_exists($directorio . $archivo_vista)) {
             $html = self::$twig->render($archivo_vista, $datos);
             $respuesta->getBody()->write($html);
-            return $respuesta;
+            return true;
         }
+        return false;
+    }
 
-        // Si no se encuentra la vista
-        throw new \Exception("La vista '{$archivo_vista}' no existe en [ " . DIR_PUBLICO . " ].");
+    /**
+     * Verificar si una vista está en la carpeta de vistas privadas.
+     */
+    public static function esVistaPublica($uri) {
+        $rutaVistaPrivada = DIR_VISTAS_PUBLICAS . $uri . '.php';
+        return file_exists($rutaVistaPrivada);
+    }
+
+    /**
+     * Verificar si una vista está en la carpeta de vistas WEB.
+     */
+    public static function esVistaWEB($uri) {
+        $rutaVistaWEB = DIR_PAGINASWEB . $uri . '.php';
+        return file_exists($rutaVistaWEB);
     }
 
 }

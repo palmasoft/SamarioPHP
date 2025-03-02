@@ -18,14 +18,11 @@ class UsuarioServicio {
         $Usuario->contrasena = password_hash($contrasena, PASSWORD_BCRYPT);
         $Usuario->nombre = $this->generarNombreUsuario($nombre);
         $Usuario->nuevo();
-
-        $Perfil = new \Perfil();
-        $Perfil->nombre_completo = $nombre;
-        $Perfil->usuario_id = $Usuario->id;
-        $Perfil->guardar();
-
-        $Usuario->Perfil = $Perfil;
-        return exito("Usuario registrado con éxito.", ['usuario' => $Usuario]);
+        $Usuario->Perfil = new \Perfil();
+        $Usuario->Perfil->nombre_completo = $nombre;
+        $Usuario->Perfil->usuario_id = $Usuario->id;
+        $Usuario->Perfil->guardar();
+        return exito("Usuario registrado con éxito.", ['Usuario' => $Usuario]);
     }
 
     private function generarNombreUsuario($nombreCompleto = null) {

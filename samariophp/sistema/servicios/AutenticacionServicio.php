@@ -1,4 +1,5 @@
 <?php
+
 namespace SamarioPHP\Sistema\Servicios;
 
 class AutenticacionServicio {
@@ -11,13 +12,11 @@ class AutenticacionServicio {
 
     public function registrar($correo, $contrasena, $nombre) {
         $respuestaRegistro = $this->usuarioServicio->registrar($correo, $contrasena, $nombre);
-
         if ($respuestaRegistro->tipo !== 'exito') {
             return $respuestaRegistro;
         }
-
-        SesionServicio::iniciar($respuestaRegistro->datos['usuario']);
-        return exito("Usuario registrado e iniciado sesión.", ['usuario' => $respuestaRegistro->datos['usuario']]);
+        SesionServicio::iniciar($respuestaRegistro->datos['Usuario']);
+        return exito("Usuario registrado e iniciado sesión.", $respuestaRegistro->datos);
     }
 
     public function existeUsuario($correo) {
@@ -53,7 +52,6 @@ class AutenticacionServicio {
             'inactivo' => 'Tu cuenta está inactiva. Verifica tu correo.',
             'suspendido' => 'Tu cuenta ha sido suspendida. Contacta al soporte.',
             'eliminado' => 'Tu cuenta fue eliminada. No puedes iniciar sesión.'
-            ][$estado] ?? 'Estado desconocido. Contacta al soporte.';
+                ][$estado] ?? 'Estado desconocido. Contacta al soporte.';
     }
-
 }

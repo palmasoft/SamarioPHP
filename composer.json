@@ -7,6 +7,8 @@
         "psr-4": {
             "SamarioPHP\\": "samariophp/",            
             "SamarioPHP\\Aplicacion\\": "samariophp/aplicacion/",     
+            "SamarioPHP\\Aplicacion\\Modelos\\": "samariophp/aplicacion/modelos/",     
+            "SamarioPHP\\Aplicacion\\Componentes\\": "samariophp/aplicacion/componentes/",     
             "SamarioPHP\\Basededatos\\": "samariophp/basededatos/",     
             "SamarioPHP\\Sistema\\": "samariophp/sistema/",
             "SamarioPHP\\Sistema\\Nucleo\\": "samariophp/sistema/nucleo/",

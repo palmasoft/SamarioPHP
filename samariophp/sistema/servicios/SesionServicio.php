@@ -1,13 +1,17 @@
 <?php
+
 namespace SamarioPHP\Sistema\Servicios;
 
 class SesionServicio {
 
-    public static function iniciar(\Usuario $usuario) {
+    public static function iniciar($Usuario) {
         self::arrancar();
-        session_regenerate_id(true);
-        $_SESSION['USUARIO'] = $usuario;
-        $_SESSION['usuario_id'] = $usuario->id;
+        try {
+            $_SESSION['USUARIO'] =  $Usuario;
+        } catch (Exception $exc) {
+            echo $exc->getTraceAsString();
+        }
+        $_SESSION['usuario_id'] = $Usuario->id;
     }
 
     public static function cerrar() {
@@ -53,11 +57,10 @@ class SesionServicio {
     private static function arrancar() {
         if (session_status() === PHP_SESSION_NONE) {
             session_start([
-                'cookie_httponly' => true,
-                'cookie_secure' => true,
-                'use_strict_mode' => true
+//                'cookie_httponly' => true,
+//                'cookie_secure' => true,
+//                'use_strict_mode' => true
             ]);
         }
     }
-
 }

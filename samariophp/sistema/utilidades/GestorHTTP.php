@@ -50,7 +50,7 @@ class GestorHTTP {
   }
 
   public static function obtenerRespuesta() {
-    return self::$Respuesta ?? new \Slim\Psr7\Response();
+    return self::$Respuesta ?? null;
   }
 
 // Por ejemplo, si necesitas acceder a algún valor de la solicitud

@@ -26,6 +26,15 @@ class Modelo {
     public function __set($propiedad, $valor) {
         $this->datos[$propiedad] = $valor;
     }
+    
+    
+    public function __serialize(): array {
+        return [
+            'id' => $this->id,
+            'nombre' => $this->nombre,
+            'email' => $this->email
+        ];
+    }
 
     public function rellenar(array $datos) {
         foreach ($datos as $clave => $valor) {

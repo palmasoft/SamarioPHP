@@ -3,49 +3,34 @@
 require_once DIR_FRAMEWORK . '/samariophp/constantes.php';
 require_once RUTA_AUTOLOAD;
 require_once RUTA_FUNCIONES;
-
 use SamarioPHP\Sistema\Middleware\VerificarInstalacionMiddleware;
-
 use SamarioPHP\Sistema\Middleware\GestorHTTPMiddleware;
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
-
+use Psr\Http\Message\ResponseInterface as HTTPRespuesta;
+use Psr\Http\Message\ServerRequestInterface as HTTPSolicitud;
 use SamarioPHP\Sistema\Middleware\AutenticacionMiddleware;
-
 use Slim\Factory\AppFactory;
+
+// Al iniciar la aplicación
+Rutas::cargarRutasDesdeComponentes();
 
 //use SamarioPHP\Sistema\Aplicacion;
 //(Aplicacion::obtenerInstancia())
 //    ->arrancar();
 //    
 $app = AppFactory::create();
+//$app->add(new GestorHTTPMiddleware());
 $app->add(new VerificarInstalacionMiddleware());
-$app->add(new GestorHTTPMiddleware());
 $app->add(new AutenticacionMiddleware());
 
-$app->any('/{ruta:.*}', function (Request $request, Response $response, $args) {
+$app->any('/{ruta:.*}', function (HTTPSolicitud $request, HTTPRespuesta $response, $args) {
+    GestorHTTP::solicitud($request);
+    GestorHTTP::respuesta($response);
     $ruta = $args['ruta'];
-    // Normalizar la ruta vacía
-    if ($ruta === "/") {
-        $ruta = "";
-    }
-
-    if (Ruta::esPublica($ruta)) {
-        return vista($ruta);
-    }
-
-    $met = GestorHTTP::$Solicitud->getMethod();
-    print_r($met);
-
     $metodo = $request->getMethod();
-    if (Ruta::esWeb($ruta)) {
-        return Ruta::resolverRuta($ruta, $metodo);
+    $Ruta = new Ruta($ruta, $metodo);
+    if ($Ruta->esValida()) {
+        return Rutas::resolverRuta($Ruta);
     }
-
-    if (Ruta::esPrivada($ruta)) {
-        return Ruta::ejecutarRuta($ruta, $metodo);
-    }
-
     return Rutas::rutaNoValida();
 });
 
